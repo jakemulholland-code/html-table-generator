@@ -1,0 +1,2202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML Table Generator | Paramount Digital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bg:#ffffff; --surface:#ffffff; --surface2:#f6f7f8; --surface3:#fbfbfc;
+      --ink:#1a1a1a; --text:#2a2a2a; --muted:#6a6a6a; --muted2:#a3a3a3;
+      --line:#ededed; --line2:#dedede;
+      --teal:#01C6A3; --teal-dark:#008475; --amber:#E8A828; --red:#DA1A50;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;line-height:1.5;}
+
+    .topbar{background:#fff;border-bottom:1px solid var(--line);padding:0 2.5rem;height:74px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+    .topbar-logo{display:flex;align-items:center;color:var(--ink);}
+    .topbar-logo a{color:inherit;display:flex;}
+    .topbar-logo .paramount-logo{height:30px;width:auto;display:block;}
+    .topbar-right{display:flex;align-items:center;gap:.85rem;}
+    .topbar-label{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal-dark);font-weight:600;}
+    .topbar-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;}
+    .topbar-date{font-size:.66rem;color:var(--muted2);letter-spacing:.04em;}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.6);}}
+
+    .hero{position:relative;overflow:hidden;padding:4rem 2.5rem 3.2rem;border-bottom:1px solid var(--line);background:var(--surface3);}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 60% at 100% 0%,rgba(1,198,163,.10) 0%,transparent 55%),radial-gradient(ellipse 40% 50% at 0% 100%,rgba(232,168,40,.07) 0%,transparent 55%);pointer-events:none;}
+    .hero-inner{max-width:1240px;margin:0 auto;position:relative;}
+    .hero-kicker{display:inline-flex;align-items:center;gap:.6rem;font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal-dark);font-weight:600;margin-bottom:1.2rem;}
+    .hero-kicker::before{content:'';display:block;width:26px;height:2px;background:var(--teal);border-radius:2px;}
+    .hero-title{font-family:'Fraunces',serif;font-size:clamp(2.3rem,5.2vw,4rem);font-weight:900;line-height:1.02;letter-spacing:-.025em;color:var(--ink);margin-bottom:1.1rem;}
+    .hero-title .accent{color:var(--teal-dark);font-style:italic;}
+    .hero-sub{color:var(--muted);font-size:.92rem;max-width:620px;line-height:1.8;font-weight:400;}
+
+    .main-wrap{max-width:1240px;margin:0 auto;padding:2.4rem 2.5rem 4rem;}
+    .layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:1.5rem;align-items:start;}
+    .layout>*{min-width:0;}
+    .sidebar{position:sticky;top:90px;max-height:calc(100vh - 106px);overflow-y:auto;border-radius:14px;}
+
+    .panel{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:1.5rem;box-shadow:0 1px 2px rgba(16,24,40,.03);}
+    .sidebar .panel{margin-bottom:0;}
+    .panel-header{padding:1.05rem 1.4rem;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
+    .panel-icon{width:28px;height:28px;border-radius:8px;background:rgba(1,198,163,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--teal-dark);}
+    .panel-icon svg{width:15px;height:15px;display:block;}
+    .panel-title{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-dark);}
+    .panel-actions{margin-left:auto;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;}
+    .panel-body{padding:1.4rem;}
+
+    .section{padding:1.15rem 1.4rem;border-bottom:1px solid var(--line);}
+    .section:last-child{border-bottom:none;}
+    .section-title{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);font-weight:700;margin-bottom:.85rem;}
+    label.field-label{display:block;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:.4rem;}
+    .field{margin-bottom:.85rem;}
+    .field:last-child{margin-bottom:0;}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
+
+    textarea,input[type=text],select{width:100%;background:var(--surface2);border:1px solid var(--line2);color:var(--text);font-family:'Sora',sans-serif;font-size:.8rem;font-weight:400;padding:.6rem .8rem;border-radius:9px;transition:border-color .14s,background .14s;outline:none;line-height:1.5;}
+    select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236a6a6a' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .8rem center;padding-right:2rem;}
+    textarea:focus,input[type=text]:focus,select:focus{border-color:var(--teal);background-color:#fff;}
+    textarea::placeholder,input::placeholder{color:var(--muted2);}
+    textarea{min-height:130px;resize:vertical;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:.76rem;}
+
+    .btn-run{background:var(--teal-dark);color:#fff;border:none;padding:.72rem 1.3rem;border-radius:9px;font-family:'Sora',sans-serif;font-size:.74rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .14s,transform .1s;display:inline-flex;align-items:center;gap:.5rem;}
+    .btn-run:hover{background:var(--teal);}
+    .btn-run:active{transform:scale(.98);}
+    .btn-run svg{width:14px;height:14px;}
+    .btn-secondary{background:#fff;color:var(--muted);border:1px solid var(--line2);padding:.72rem 1.2rem;border-radius:9px;font-family:'Sora',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.05em;cursor:pointer;transition:border-color .14s,color .14s;text-transform:uppercase;display:inline-flex;align-items:center;gap:.5rem;}
+    .btn-secondary:hover{border-color:var(--teal);color:var(--teal-dark);}
+    .btn-secondary svg{width:14px;height:14px;}
+    .btn-sm{padding:.4rem .8rem;font-size:.62rem;border-radius:7px;}
+    .btn-danger:hover{border-color:var(--red);color:var(--red);}
+
+    .filter-group{display:flex;gap:.35rem;flex-wrap:wrap;}
+    .filter-btn{background:var(--surface2);border:1px solid var(--line2);color:var(--muted);padding:.32rem .7rem;border-radius:7px;font-family:'Sora',sans-serif;font-size:.66rem;font-weight:600;cursor:pointer;transition:all .12s;}
+    .filter-btn:hover{border-color:var(--teal);color:var(--teal-dark);}
+    .filter-btn.active{background:rgba(1,198,163,.1);border-color:var(--teal);color:var(--teal-dark);}
+
+    /* switch */
+    .switch{display:flex;align-items:center;justify-content:space-between;gap:.75rem;font-size:.76rem;color:var(--text);cursor:pointer;padding:.3rem 0;font-weight:400;}
+    .switch input{appearance:none;-webkit-appearance:none;width:32px;height:18px;border-radius:9px;background:var(--line2);position:relative;cursor:pointer;transition:background .15s;flex-shrink:0;}
+    .switch input::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:left .15s;}
+    .switch input:checked{background:var(--teal-dark);}
+    .switch input:checked::after{left:16px;}
+
+    /* stepper */
+    .stepper{display:flex;align-items:center;border:1px solid var(--line2);border-radius:9px;background:var(--surface2);overflow:hidden;}
+    .stepper button{width:34px;height:34px;border:none;background:none;color:var(--muted);font-size:1rem;cursor:pointer;font-family:'Sora',sans-serif;transition:color .12s,background .12s;}
+    .stepper button:hover{color:var(--teal-dark);background:rgba(1,198,163,.08);}
+    .stepper span{flex:1;text-align:center;font-size:.82rem;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;}
+
+    /* colour */
+    .color-field{display:flex;align-items:center;gap:.5rem;background:var(--surface2);border:1px solid var(--line2);border-radius:9px;padding:.3rem .5rem;cursor:pointer;}
+    .color-field:hover{border-color:var(--teal);}
+    .color-field input[type=color]{-webkit-appearance:none;appearance:none;width:24px;height:24px;border:none;background:none;padding:0;cursor:pointer;flex-shrink:0;}
+    .color-field input[type=color]::-webkit-color-swatch-wrapper{padding:0;}
+    .color-field input[type=color]::-webkit-color-swatch{border-radius:6px;border:1px solid rgba(0,0,0,.12);}
+    .color-field input[type=color]::-moz-color-swatch{border-radius:6px;border:1px solid rgba(0,0,0,.12);}
+    .color-field .hex{font-family:'SF Mono',Menlo,Consolas,monospace;font-size:.68rem;color:var(--muted);text-transform:uppercase;}
+
+    /* range */
+    .range-row{display:flex;align-items:center;gap:.7rem;}
+    .range-row output{font-size:.7rem;color:var(--ink);font-weight:600;min-width:38px;text-align:right;font-variant-numeric:tabular-nums;}
+    input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:3px;background:var(--line2);border-radius:2px;outline:none;cursor:pointer;}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--teal-dark);border:2px solid #fff;box-shadow:0 0 0 1px var(--teal-dark);}
+    input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--teal-dark);border:2px solid #fff;}
+
+    /* toolbar */
+    .toolbar{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;padding:.75rem 1.4rem;border-bottom:1px solid var(--line);background:var(--surface3);position:relative;}
+    .tb-group{display:flex;gap:.25rem;align-items:center;}
+    .tb-pipe{width:1px;height:20px;background:var(--line2);margin:0 .3rem;}
+    .tb-btn{min-width:32px;height:32px;padding:0 .5rem;background:#fff;border:1px solid var(--line2);border-radius:7px;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;gap:.3rem;cursor:pointer;font-family:'Sora',sans-serif;font-size:.8rem;transition:all .12s;position:relative;white-space:nowrap;}
+    .tb-btn:hover{border-color:var(--teal);color:var(--teal-dark);}
+    .tb-btn.on{background:rgba(1,198,163,.12);border-color:var(--teal);color:var(--teal-dark);}
+    .tb-btn svg{width:15px;height:15px;display:block;}
+    .tb-btn .lbl{font-size:.6rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
+    .tb-btn.color-btn input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+    .tb-btn .swatch-bar{display:block;width:14px;height:3px;border-radius:2px;margin-top:1px;}
+    .tb-btn .stack{display:flex;flex-direction:column;align-items:center;line-height:1;}
+    .tb-select{height:32px;width:auto;padding:0 1.8rem 0 .6rem;font-size:.66rem;border-radius:7px;background-color:#fff;background-position:right .6rem center;}
+    .tb-label{font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);font-weight:600;margin-right:.15rem;}
+    [data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:.62rem;font-weight:500;letter-spacing:.02em;text-transform:none;padding:.3rem .55rem;border-radius:5px;white-space:nowrap;pointer-events:none;z-index:50;}
+
+    .link-bar,.import-bar{display:none;gap:.6rem;align-items:center;padding:.75rem 1.4rem;border-bottom:1px solid var(--line);background:rgba(1,198,163,.05);flex-wrap:wrap;}
+    .link-bar.open{display:flex;}
+    .link-bar input[type=text]{flex:1;min-width:220px;background:#fff;}
+    .import-bar{flex-direction:column;align-items:stretch;}
+    .import-bar.open{display:flex;}
+    .import-note{font-size:.72rem;color:var(--muted);line-height:1.6;}
+
+    /* stage / editor */
+    .stage{padding:1.6rem 1.4rem 1.4rem;background:#fff;overflow:auto;transition:background .2s;}
+    .stage.dark{background:#1a1f26;}
+    .stage-inner{display:grid;grid-template-columns:minmax(0,1fr) 30px;grid-template-rows:auto auto;gap:8px;min-width:min-content;}
+    .ed-caption{grid-column:1 / -1;font-weight:600;padding:0 0 4px 30px;min-height:0;}
+    .ed-caption:empty{display:none;}
+    .ed-wrap{min-width:0;}
+    table.ed{border-collapse:collapse;border-spacing:0;}
+    table.ed td.h,table.ed th.h{border:none;background:none;padding:0;font-family:'Sora',sans-serif;font-size:.58rem;font-weight:600;color:#a3adb8;text-align:center;user-select:none;position:relative;}
+    table.ed th.h-col{height:24px;}
+    table.ed td.h-row{width:30px;min-width:30px;vertical-align:middle;}
+    table.ed .h-corner{width:30px;}
+    .h .x{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--red);color:#fff;border:none;font-size:11px;line-height:16px;cursor:pointer;opacity:0;transition:opacity .12s;display:flex;align-items:center;justify-content:center;padding:0;}
+    .h-col .x{top:3px;right:4px;}
+    .h-row .x{left:7px;top:50%;margin-top:-8px;}
+    .h:hover .x{opacity:1;}
+    .h-row:hover .num{opacity:0;}
+    .h .num{transition:opacity .12s;}
+    table.ed td.cell{position:relative;cursor:text;}
+    table.ed td.cell.active{outline:2px solid var(--teal);outline-offset:-2px;}
+    table.ed td.cell.in-scope{box-shadow:inset 0 0 0 9999px rgba(1,198,163,.08);}
+    .cell-edit{outline:none;min-height:1.5em;min-width:70px;word-break:break-word;}
+    .cell-edit:empty::before{content:attr(data-ph);color:#b7c0c9;pointer-events:none;font-weight:300;}
+    .cell-edit a{color:inherit;text-decoration:underline;}
+    .cell-edit ul,.cell-edit ol{margin:0;padding:0 0 0 1.2em;}
+    .cell-edit ul{list-style-type:disc;}
+    .cell-edit ol{list-style-type:decimal;}
+    .cell-edit li{margin:0 0 4px;}
+    .cell-edit img{max-width:100%;height:auto;vertical-align:middle;cursor:pointer;}
+    .cell-edit img:hover,.cell-edit .pd-bar:hover{outline:2px dashed var(--teal);outline-offset:2px;}
+    .cell-edit .pd-bar{display:block;cursor:pointer;margin:2px 0;user-select:none;}
+    .ed-chart{grid-column:1 / -1;padding-left:30px;}
+    .ed-chart:empty{display:none;}
+
+    /* emoji picker */
+    .emoji-pop{display:none;position:absolute;z-index:120;top:calc(100% - 4px);left:1.4rem;width:340px;max-width:calc(100vw - 2rem);background:#fff;border:1px solid var(--line2);border-radius:12px;box-shadow:0 12px 32px rgba(16,24,40,.14);overflow:hidden;}
+    .emoji-pop.open{display:block;}
+    .emoji-tabs{display:flex;gap:.25rem;padding:.55rem .6rem;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+    .emoji-tabs button{background:none;border:1px solid transparent;border-radius:6px;padding:.2rem .5rem;font-family:'Sora',sans-serif;font-size:.62rem;font-weight:600;color:var(--muted);cursor:pointer;}
+    .emoji-tabs button.active{background:rgba(1,198,163,.1);border-color:var(--teal);color:var(--teal-dark);}
+    .emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;padding:.55rem;max-height:210px;overflow-y:auto;}
+    .emoji-grid button{background:none;border:none;border-radius:6px;font-size:1.25rem;line-height:1;padding:.35rem 0;cursor:pointer;font-family:'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif;}
+    .emoji-grid button:hover{background:var(--surface2);}
+    .emoji-grid.symbols{grid-template-columns:repeat(8,1fr);}
+    .emoji-grid.symbols button{font-family:'Segoe UI',Arial,'Arial Unicode MS',sans-serif;font-size:1.05rem;padding:.45rem 0;color:var(--ink);white-space:nowrap;}
+    .picker-search-wrap{padding:.6rem .6rem 0;}
+    .picker-search-wrap input[type=text]{padding:.45rem .7rem;font-size:.74rem;background:#fff;}
+    .picker-empty{grid-column:1 / -1;font-size:.72rem;color:var(--muted);padding:.8rem .3rem;text-align:center;}
+    .emoji-foot{font-size:.62rem;color:var(--muted2);padding:.45rem .7rem;border-top:1px solid var(--line);}
+
+    /* insert forms */
+    .insert-bar{display:none;gap:.6rem;align-items:flex-end;padding:.85rem 1.4rem;border-bottom:1px solid var(--line);background:rgba(1,198,163,.05);flex-wrap:wrap;}
+    .insert-bar.open{display:flex;}
+    .insert-bar .f{display:flex;flex-direction:column;gap:.3rem;}
+    .insert-bar .f.grow{flex:1;min-width:200px;}
+    .insert-bar input[type=text]{background:#fff;padding:.5rem .7rem;}
+    .insert-bar .field-label{margin:0;}
+    .insert-bar .color-field{background:#fff;}
+    .insert-bar .switch{padding:.5rem 0;}
+    .upload-info{font-size:.68rem;color:var(--muted);align-self:center;}
+    .upload-info.warn{color:#a9770f;}
+
+    /* chart panel */
+    .chart-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem 1rem;}
+    .chart-grid .span2{grid-column:span 2;}
+    .chart-body{display:none;}
+    .chart-body.open{display:block;}
+    .chart-off-note{font-size:.76rem;color:var(--muted);padding:1rem 1.4rem;line-height:1.6;}
+    .chart-warn{font-size:.72rem;color:#a9770f;margin-top:.9rem;}
+    .chart-grid .trunc-opt[hidden]{display:none;}
+    .trunc-hint{font-size:.7rem;color:var(--muted);line-height:1.6;align-self:end;}
+    .style-note{display:none;font-size:.7rem;line-height:1.6;color:#a9770f;background:rgba(232,168,40,.1);border:1px solid rgba(232,168,40,.3);border-radius:8px;padding:.55rem .7rem;margin-bottom:.85rem;}
+    body.bare .style-note{display:block;}
+    body.bare #style-section .style-fields{opacity:.4;pointer-events:none;}
+    body.bare .styled-only{opacity:.35;pointer-events:none;}
+    body:not(.bare) .bare-only{display:none !important;}
+    body.bare .cell-edit font[color]{color:inherit !important;}
+    .bare-note{font-size:.7rem;color:var(--muted);line-height:1.6;margin:.2rem 0 .7rem;}
+    .preview-note{display:none;font-size:.68rem;color:var(--muted2);margin:-.6rem 0 1rem;}
+    body.bare .preview-note{display:block;}
+    .preview-stage.bare-preview .pv{font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;font-weight:400;color:#222;}
+    .stage.dark .pv, .preview-stage.dark .pv{color:#e8edf2;}
+    /* site preset */
+    .site-row{display:flex;gap:.45rem;}
+    .site-row input[type=text]{flex:1;min-width:0;padding:.5rem .7rem;font-size:.76rem;}
+    .site-row .btn-run{padding:.5rem .8rem;flex-shrink:0;}
+    .link-btn{background:none;border:none;padding:0;margin-top:.55rem;font-family:'Sora',sans-serif;font-size:.64rem;font-weight:600;color:var(--teal-dark);cursor:pointer;text-align:left;}
+    .link-btn:hover{text-decoration:underline;}
+    .site-paste{margin-top:.6rem;display:flex;flex-direction:column;gap:.5rem;}
+    .site-paste[hidden]{display:none;}
+    .site-paste textarea{min-height:90px;font-size:.7rem;}
+    .site-status{margin-top:.65rem;font-size:.7rem;line-height:1.6;color:var(--muted);display:flex;gap:.5rem;align-items:flex-start;}
+    .site-status.err{color:var(--red);}
+    .site-status .spinner{width:14px;height:14px;border:2px solid var(--line2);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;margin-top:2px;}
+    .site-status code{font-family:'SF Mono',Menlo,Consolas,monospace;font-size:.66rem;background:var(--surface2);border:1px solid var(--line2);border-radius:4px;padding:.05rem .3rem;color:var(--ink);}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .site-results{margin-top:.9rem;border:1px solid var(--line2);border-radius:10px;overflow:hidden;}
+    .site-results[hidden]{display:none;}
+    .site-head{padding:.7rem .8rem;background:var(--surface3);border-bottom:1px solid var(--line);}
+    .site-name{font-size:.74rem;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .site-meta{font-size:.62rem;color:var(--muted2);margin-top:.15rem;}
+    .site-block{padding:.7rem .8rem;border-bottom:1px solid var(--line);}
+    .site-block:last-child{border-bottom:none;}
+    .site-label{font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:.45rem;}
+    .role-row{display:flex;align-items:center;gap:.5rem;font-size:.7rem;margin-bottom:.35rem;}
+    .role-row:last-child{margin-bottom:0;}
+    .sw{width:18px;height:18px;border-radius:5px;border:1px solid rgba(0,0,0,.12);flex-shrink:0;}
+    .role-row .r{color:var(--text);flex:1;min-width:0;}
+    .role-row .r small{display:block;color:var(--muted2);font-size:.6rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .role-row .hx{font-family:'SF Mono',Menlo,Consolas,monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;}
+    .chips{display:flex;flex-wrap:wrap;gap:.35rem;}
+    .chip{width:26px;height:26px;border-radius:7px;border:1px solid rgba(0,0,0,.12);cursor:pointer;padding:0;transition:transform .1s;}
+    .chip:hover{transform:scale(1.12);}
+    .chip.on{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--teal);}
+    .font-row{font-size:.72rem;margin-bottom:.3rem;color:var(--text);}
+    .font-row b{font-weight:600;}
+    .font-row small{color:var(--muted2);font-size:.6rem;}
+    .site-apply{width:100%;justify-content:center;margin-top:.1rem;}
+    .site-warn{font-size:.62rem;color:#a9770f;line-height:1.5;margin-top:.4rem;}
+    .chart-export{margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid var(--line);}
+    .chart-export .actions{margin-top:1rem;}
+    .chart-export .trunc-hint{margin-top:.8rem;}
+    .stage.data-only .ed-wrap,.stage.data-only .add-row,.stage.data-only .add-col,.stage.data-only .ed-caption{opacity:.55;}
+    .data-only-tag{display:none;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#a9770f;background:rgba(232,168,40,.14);padding:.2rem .55rem;border-radius:5px;}
+    .data-only-tag.show{display:inline-block;}
+    @media (max-width:640px){ .chart-grid{grid-template-columns:1fr 1fr;} }
+    .add-col,.add-row{border:1.5px dashed #cfd8e0;background:transparent;color:var(--teal-dark);border-radius:8px;cursor:pointer;font-family:'Sora',sans-serif;font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;transition:all .14s;display:flex;align-items:center;justify-content:center;gap:.4rem;}
+    .add-col{writing-mode:vertical-rl;margin-top:24px;min-height:60px;}
+    .add-row{height:30px;margin-left:30px;}
+    .add-col:hover,.add-row:hover{border-color:var(--teal);background:rgba(1,198,163,.08);}
+    .stage.dark .add-col,.stage.dark .add-row{border-color:#3a4552;}
+    .stage-foot{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.7rem 1.4rem;border-top:1px solid var(--line);font-size:.68rem;color:var(--muted2);flex-wrap:wrap;}
+    .kbd{font-family:'SF Mono',Menlo,Consolas,monospace;font-size:.62rem;background:var(--surface2);border:1px solid var(--line2);border-radius:4px;padding:.05rem .35rem;color:var(--muted);}
+
+    /* output */
+    .tabs{display:flex;gap:.35rem;}
+    .code-pre{margin:0;padding:1.1rem 1.4rem;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:.7rem;line-height:1.7;color:var(--text);max-height:420px;overflow:auto;white-space:pre;tab-size:2;background:var(--surface3);}
+    .code-pre.wrap{white-space:pre-wrap;word-break:break-all;}
+    .hl-t{color:var(--teal-dark);font-weight:600;}
+    .hl-a{color:#a9770f;}
+    .hl-v{color:#5b6b7b;}
+    .preview-stage{padding:1.6rem 1.4rem;background:#fff;overflow:auto;}
+    .preview-stage.dark{background:#1a1f26;}
+    .output-actions{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;padding:1.1rem 1.4rem;border-top:1px solid var(--line);}
+    .output-meta{margin-left:auto;font-size:.7rem;color:var(--muted2);font-variant-numeric:tabular-nums;}
+    .note{font-size:.72rem;color:var(--muted);line-height:1.65;padding:0 1.4rem 1.2rem;}
+    .note strong{color:var(--ink);font-weight:600;}
+
+    .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-size:.76rem;font-weight:500;padding:.7rem 1.1rem;border-radius:10px;opacity:0;pointer-events:none;transition:all .2s;z-index:500;display:flex;align-items:center;gap:.5rem;box-shadow:0 8px 24px rgba(0,0,0,.18);}
+    .toast.show{opacity:1;transform:translate(-50%,0);}
+    .toast i{width:8px;height:8px;border-radius:50%;background:var(--teal);display:block;}
+    .toast.err i{background:var(--red);}
+
+    footer{border-top:1px solid var(--line);padding:1.8rem 2.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;max-width:1240px;margin:0 auto;}
+    .footer-left{display:flex;align-items:center;gap:.8rem;color:var(--muted2);}
+    .footer-left .paramount-logo{height:24px;width:auto;opacity:.55;}
+    .footer-text{font-size:.7rem;color:var(--muted2);letter-spacing:.03em;}
+    .footer-text a{color:var(--teal-dark);text-decoration:none;font-weight:500;}
+
+    @media (max-width:980px){
+      .layout{grid-template-columns:1fr;}
+      .sidebar{position:static;max-height:none;}
+    }
+    @media (max-width:640px){
+      .topbar{padding:0 1.25rem;}
+      .topbar-label{display:none;}
+      .hero{padding:2.2rem 1.25rem;}
+      .main-wrap{padding:1.5rem 1rem 3rem;}
+      footer{padding:1.5rem 1.25rem;}
+      .toolbar,.section,.stage,.output-actions{padding-left:1rem;padding-right:1rem;}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-logo"><a href="https://paramountdigital.co.uk" target="_blank" rel="noopener"><svg viewBox="0 0 139 47" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="lt-top" class="paramount-logo"><title id="lt-top">Paramount Digital</title><g><path class="logo-tile tile-1" d="M2.14973 24.2673H7.69928C8.82722 24.2673 9.74163 25.1829 9.74163 26.3124V31.9093C9.74163 33.0388 8.82722 33.9544 7.69928 33.9544H2.14973C1.0218 33.9544 0.107422 33.0388 0.107422 31.9093V26.3124C0.107422 25.1829 1.0218 24.2673 2.14973 24.2673Z" fill="#01C6A3" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-2" d="M19.728 36.3229H14.1786C13.0506 36.3229 12.1362 37.2385 12.1362 38.368V43.9653C12.1362 45.0948 13.0506 46.0105 14.1786 46.0105H19.728C20.856 46.0105 21.7704 45.0948 21.7704 43.9653V38.368C21.7704 37.2385 20.856 36.3229 19.728 36.3229Z" fill="#008475" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-3" d="M19.728 24.2672H14.1786C13.0506 24.2672 12.1362 25.1829 12.1362 26.3124V31.9096C12.1362 33.0392 13.0506 33.9548 14.1786 33.9548H19.728C20.856 33.9548 21.7704 33.0392 21.7704 31.9096V26.3124C21.7704 25.1829 20.856 24.2672 19.728 24.2672Z" fill="#01C6A3" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-4" d="M19.728 12.2115H14.1786C13.0506 12.2115 12.1362 13.1271 12.1362 14.2567V19.8539C12.1362 20.9834 13.0506 21.8991 14.1786 21.8991H19.728C20.856 21.8991 21.7704 20.9834 21.7704 19.8539V14.2567C21.7704 13.1271 20.856 12.2115 19.728 12.2115Z" fill="#E8A828" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-5" d="M31.7183 0.155762H26.1688C25.0409 0.155762 24.1265 1.07142 24.1265 2.20093V7.7982C24.1265 8.92771 25.0409 9.84337 26.1688 9.84337H31.7183C32.8462 9.84337 33.7606 8.92771 33.7606 7.7982V2.20093C33.7606 1.07142 32.8462 0.155762 31.7183 0.155762Z" fill="#DA1A50" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-6" d="M31.7183 12.2115H26.1688C25.0409 12.2115 24.1265 13.1271 24.1265 14.2567V19.8539C24.1265 20.9834 25.0409 21.8991 26.1688 21.8991H31.7183C32.8462 21.8991 33.7606 20.9834 33.7606 19.8539V14.2567C33.7606 13.1271 32.8462 12.2115 31.7183 12.2115Z" fill="#E8A828" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-7" d="M31.7183 24.2672H26.1688C25.0409 24.2672 24.1265 25.1829 24.1265 26.3124V31.9096C24.1265 33.0392 25.0409 33.9548 26.1688 33.9548H31.7183C32.8462 33.9548 33.7606 33.0392 33.7606 31.9096V26.3124C33.7606 25.1829 32.8462 24.2672 31.7183 24.2672Z" fill="#01C6A3" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-8" d="M31.7183 36.3229H26.1688C25.0409 36.3229 24.1265 37.2385 24.1265 38.368V43.9653C24.1265 45.0948 25.0409 46.0105 26.1688 46.0105H31.7183C32.8462 46.0105 33.7606 45.0948 33.7606 43.9653V38.368C33.7606 37.2385 32.8462 36.3229 31.7183 36.3229Z" fill="#008475" stroke="#DEDEDE" stroke-width="0.238183"></path><path d="M51.9001 4.78326C51.9001 5.59526 51.7055 6.35649 51.3161 7.06698C50.9412 7.77748 50.3426 8.35022 49.5206 8.78521C48.7131 9.2202 47.6892 9.43766 46.4489 9.43766H43.918V15.2667H40.8896V0.0853271H46.4489C47.6171 0.0853271 48.6121 0.288325 49.4341 0.694319C50.2561 1.10031 50.869 1.65856 51.2728 2.36904C51.691 3.07954 51.9001 3.88428 51.9001 4.78326ZM46.3191 6.97999C47.1556 6.97999 47.7757 6.79149 48.1795 6.41449C48.5833 6.02299 48.7851 5.47926 48.7851 4.78326C48.7851 3.30429 47.9631 2.5648 46.3191 2.5648H43.918V6.97999H46.3191Z" fill="currentColor"></path><path d="M51.8574 9.81983C51.8574 8.78632 52.0593 7.8697 52.4632 7.06995C52.8793 6.2702 53.436 5.65501 54.1335 5.22437C54.8433 4.79374 55.6325 4.57843 56.5014 4.57843C57.2601 4.57843 57.9209 4.73222 58.4838 5.03982C59.0589 5.34741 59.5178 5.73498 59.8605 6.20252V4.74453H62.4486V14.9689H59.8605V13.4741C59.53 13.9539 59.0712 14.3538 58.4838 14.6737C57.9086 14.9813 57.2417 15.1351 56.4831 15.1351C55.6264 15.1351 54.8433 14.9136 54.1335 14.4707C53.436 14.0278 52.8793 13.4064 52.4632 12.6067C52.0593 11.7946 51.8574 10.8657 51.8574 9.81983ZM59.8605 9.85679C59.8605 9.22925 59.7381 8.69405 59.4933 8.25111C59.2486 7.79587 58.9182 7.45136 58.5022 7.21759C58.0861 6.97152 57.6395 6.84848 57.1622 6.84848C56.685 6.84848 56.2444 6.96536 55.8406 7.19913C55.4368 7.4329 55.1063 7.77741 54.8494 8.23265C54.6047 8.67559 54.4823 9.20467 54.4823 9.81983C54.4823 10.4351 54.6047 10.9764 54.8494 11.4439C55.1063 11.8992 55.4368 12.2498 55.8406 12.4959C56.2567 12.742 56.6971 12.8651 57.1622 12.8651C57.6395 12.8651 58.0861 12.7481 58.5022 12.5144C58.9182 12.2683 59.2486 11.9238 59.4933 11.4808C59.7381 11.0256 59.8605 10.4842 59.8605 9.85679Z" fill="currentColor"></path><path d="M70.0645 9.81983C70.0645 8.78632 70.2664 7.8697 70.6702 7.06995C71.0863 6.2702 71.6431 5.65501 72.3406 5.22437C73.0503 4.79374 73.8396 4.57843 74.7084 4.57843C75.4671 4.57843 76.1279 4.73222 76.6909 5.03982C77.266 5.34741 77.7249 5.73498 78.0675 6.20252V4.74453H80.6556V14.9689H78.0675V13.4741C77.7371 13.9539 77.2782 14.3538 76.6909 14.6737C76.1157 14.9813 75.4488 15.1351 74.6901 15.1351C73.8335 15.1351 73.0503 14.9136 72.3406 14.4707C71.6431 14.0278 71.0863 13.4064 70.6702 12.6067C70.2664 11.7946 70.0645 10.8657 70.0645 9.81983ZM78.0675 9.85679C78.0675 9.22925 77.9451 8.69405 77.7004 8.25111C77.4556 7.79587 77.1252 7.45136 76.7092 7.21759C76.2931 6.97152 75.8465 6.84848 75.3692 6.84848C74.892 6.84848 74.4514 6.96536 74.0476 7.19913C73.6438 7.4329 73.3134 7.77741 73.0565 8.23265C72.8117 8.67559 72.6893 9.20467 72.6893 9.81983C72.6893 10.4351 72.8117 10.9764 73.0565 11.4439C73.3134 11.8992 73.6438 12.2498 74.0476 12.4959C74.4637 12.742 74.9043 12.8651 75.3692 12.8651C75.8465 12.8651 76.2931 12.7481 76.7092 12.5144C77.1252 12.2683 77.4556 11.9238 77.7004 11.4808C77.9451 11.0256 78.0675 10.4842 78.0675 9.85679Z" fill="currentColor"></path><path d="M81.5464 28.8716C81.5464 27.8307 81.7497 26.9075 82.1565 26.102C82.5754 25.2965 83.1362 24.6769 83.8388 24.2431C84.5537 23.8094 85.3486 23.5925 86.2236 23.5925C86.9878 23.5925 87.6534 23.7474 88.2203 24.0572C88.7996 24.367 89.2617 24.7574 89.6069 25.2283V23.7598H92.2138V34.0577H89.6069V32.5521C89.2741 33.0354 88.8118 33.4381 88.2203 33.7603C87.641 34.0701 86.9693 34.225 86.2051 34.225C85.3424 34.225 84.5537 34.0019 83.8388 33.5558C83.1362 33.1097 82.5754 32.4839 82.1565 31.6784C81.7497 30.8605 81.5464 29.925 81.5464 28.8716ZM89.6069 28.9088C89.6069 28.2768 89.4836 27.7377 89.2371 27.2916C88.9906 26.8331 88.6578 26.4861 88.2388 26.2507C87.8197 26.0028 87.3699 25.8789 86.8892 25.8789C86.4085 25.8789 85.9648 25.9966 85.5581 26.232C85.1514 26.4675 84.8186 26.8145 84.5598 27.273C84.3133 27.7191 84.19 28.2519 84.19 28.8716C84.19 29.4912 84.3133 30.0364 84.5598 30.5073C84.8186 30.9658 85.1514 31.3191 85.5581 31.5669C85.9771 31.8147 86.4209 31.9386 86.8892 31.9386C87.3699 31.9386 87.8197 31.821 88.2388 31.5855C88.6578 31.3376 88.9906 30.9907 89.2371 30.5446C89.4836 30.086 89.6069 29.5407 89.6069 28.9088Z" fill="currentColor"></path><path d="M46.1876 19.0687C47.7571 19.0687 49.1338 19.3771 50.318 19.994C51.5165 20.6108 52.4367 21.493 53.0787 22.6406C53.735 23.7739 54.0631 25.0937 54.0631 26.5999C54.0631 28.1062 53.735 29.4259 53.0787 30.5592C52.4367 31.6781 51.5165 32.546 50.318 33.1629C49.1338 33.7797 47.7571 34.0881 46.1876 34.0881H40.9658V19.0687H46.1876ZM46.0806 31.5275C47.65 31.5275 48.8627 31.0971 49.7188 30.2364C50.5748 29.3757 51.0028 28.1636 51.0028 26.5999C51.0028 25.0363 50.5748 23.817 49.7188 22.9419C48.8627 22.0525 47.65 21.6078 46.0806 21.6078H43.9619V31.5275H46.0806Z" fill="currentColor"></path><path d="M105.143 15.1351C104.163 15.1351 103.282 14.9198 102.5 14.4891C101.716 14.0462 101.098 13.4248 100.646 12.6251C100.206 11.8254 99.9844 10.9025 99.9844 9.85679C99.9844 8.81093 100.211 7.88814 100.664 7.0884C101.129 6.28865 101.759 5.67347 102.555 5.24283C103.35 4.79989 104.237 4.57843 105.216 4.57843C106.195 4.57843 107.082 4.79989 107.878 5.24283C108.673 5.67347 109.297 6.28865 109.75 7.0884C110.215 7.88814 110.447 8.81093 110.447 9.85679C110.447 10.9025 110.209 11.8254 109.732 12.6251C109.267 13.4248 108.63 14.0462 107.823 14.4891C107.027 14.9198 106.134 15.1351 105.143 15.1351ZM105.143 12.8835C105.608 12.8835 106.042 12.7728 106.446 12.5512C106.862 12.3175 107.193 11.973 107.437 11.5178C107.682 11.0625 107.804 10.5088 107.804 9.85679C107.804 8.88475 107.547 8.14038 107.034 7.62361C106.532 7.09456 105.914 6.83002 105.18 6.83002C104.445 6.83002 103.828 7.09456 103.326 7.62361C102.836 8.14038 102.591 8.88475 102.591 9.85679C102.591 10.8288 102.83 11.5793 103.307 12.1084C103.797 12.6251 104.409 12.8835 105.143 12.8835Z" fill="currentColor"></path><path d="M121.033 4.74457V14.969H118.445V13.6772C118.115 14.12 117.68 14.4707 117.142 14.7291C116.616 14.9752 116.041 15.0982 115.416 15.0982C114.621 15.0982 113.917 14.9322 113.306 14.5999C112.694 14.2554 112.21 13.7571 111.855 13.105C111.512 12.4406 111.342 11.6532 111.342 10.7426V4.74457H113.911V10.3735C113.911 11.1856 114.113 11.8131 114.517 12.256C114.921 12.6866 115.471 12.902 116.169 12.902C116.878 12.902 117.435 12.6866 117.84 12.256C118.243 11.8131 118.445 11.1856 118.445 10.3735V4.74457H121.033Z" fill="currentColor"></path><path d="M127.875 4.59692C129.086 4.59692 130.065 4.98449 130.812 5.75963C131.558 6.52247 131.931 7.59289 131.931 8.97092V14.969H129.361V9.32154C129.361 8.50953 129.16 7.88819 128.756 7.45755C128.352 7.01462 127.802 6.79315 127.104 6.79315C126.394 6.79315 125.831 7.01462 125.415 7.45755C125.012 7.88819 124.809 8.50953 124.809 9.32154V14.969H122.24V4.74457H124.809V6.01801C125.152 5.57508 125.587 5.23057 126.113 4.98449C126.651 4.72611 127.238 4.59692 127.875 4.59692Z" fill="currentColor"></path><path d="M136.334 6.86697V11.8131C136.334 12.1576 136.413 12.4098 136.572 12.5698C136.743 12.7174 137.025 12.7912 137.417 12.7912H138.609V14.969H136.994C134.828 14.969 133.745 13.9109 133.745 11.7947V6.86697H132.534V4.74456H133.745V2.21613H136.334V4.74456H138.609V6.86697H136.334Z" fill="currentColor"></path><path d="M94.7518 4.59692C96.0001 4.59692 97.0038 4.98449 97.7628 5.75963C98.5337 6.52247 98.9191 7.59289 98.9191 8.97092V14.969H96.3494V9.32154C96.3494 8.52183 96.1472 7.91279 95.7437 7.49447C95.3394 7.06384 94.7888 6.84851 94.0911 6.84851C93.3943 6.84851 92.8374 7.06384 92.4213 7.49447C92.0169 7.91279 91.8156 8.52183 91.8156 9.32154V14.969H89.2455V9.32154C89.2455 8.52183 89.0436 7.91279 88.6397 7.49447C88.2359 7.06384 87.6852 6.84851 86.9878 6.84851C86.278 6.84851 85.7152 7.06384 85.2991 7.49447C84.8952 7.91279 84.6933 8.52183 84.6933 9.32154V14.969H82.1235V4.74457H84.6933V5.9811C85.0238 5.55046 85.4459 5.21211 85.9598 4.96604C86.4861 4.71996 87.0612 4.59692 87.6853 4.59692C88.4807 4.59692 89.1904 4.76918 89.8145 5.11368C90.4383 5.44589 90.9221 5.92573 91.265 6.55323C91.5954 5.96264 92.072 5.48895 92.6966 5.13214C93.3329 4.77533 94.018 4.59692 94.7518 4.59692Z" fill="currentColor"></path><path d="M66.4863 6.33176C66.8166 5.79039 67.245 5.36591 67.7711 5.05832C68.3096 4.75072 68.9214 4.59692 69.6067 4.59692V7.30991H68.9275C68.1199 7.30991 67.508 7.50062 67.092 7.88203C66.6882 8.26346 66.4863 8.92786 66.4863 9.87523V14.969H63.9165V4.74457H66.4863V6.33176Z" fill="currentColor"></path><path d="M57.9638 23.7598V34.0577H55.3755V23.7598H57.9638Z" fill="currentColor"></path><path d="M73.618 23.7598V34.0577H71.0298V23.7598H73.618Z" fill="currentColor"></path><path d="M96.2801 20.3025V34.0578H93.6924V20.3025H96.2801Z" fill="currentColor"></path><path d="M78.6657 25.8974V30.8792C78.6657 31.2261 78.7458 31.4801 78.9061 31.6412C79.0786 31.79 79.362 31.8643 79.7565 31.8643H80.9581V34.0577H79.3313C77.1498 34.0577 76.059 32.992 76.059 30.8606V25.8974H74.8389V23.7598H76.059V21.2133H78.6657V23.7598H80.9581V25.8974H78.6657Z" fill="currentColor"></path><path d="M63.86 23.5925C64.6241 23.5925 65.2958 23.7474 65.875 24.0572C66.4543 24.3547 66.9104 24.745 67.2431 25.2283V23.7598H69.8499V34.1321C69.8499 35.0863 69.6588 35.9351 69.2767 36.6787C68.8947 37.4346 68.3215 38.0294 67.5574 38.4631C66.7932 38.9092 65.8689 39.1323 64.7843 39.1323C63.33 39.1323 62.1345 38.7915 61.1978 38.1099C60.2734 37.4283 59.7496 36.499 59.6263 35.3217H62.1961C62.3317 35.7926 62.6213 36.1644 63.065 36.437C63.521 36.722 64.0695 36.8645 64.7104 36.8645C65.4622 36.8645 66.0722 36.6353 66.5406 36.1768C67.0089 35.7306 67.2431 35.0491 67.2431 34.1321V32.5335C66.9104 33.0168 66.4482 33.4195 65.8566 33.7417C65.2773 34.0639 64.6117 34.225 63.86 34.225C62.9972 34.225 62.2084 34.0019 61.4935 33.5558C60.7787 33.1097 60.2118 32.4839 59.7928 31.6784C59.386 30.8605 59.1826 29.925 59.1826 28.8716C59.1826 27.8307 59.386 26.9075 59.7928 26.102C60.2118 25.2965 60.7725 24.6769 61.475 24.2431C62.1899 23.8094 62.9849 23.5925 63.86 23.5925ZM67.2431 28.9088C67.2431 28.2768 67.1199 27.7377 66.8734 27.2916C66.6269 26.8331 66.2941 26.4861 65.875 26.2507C65.456 26.0028 65.0062 25.8789 64.5255 25.8789C64.0448 25.8789 63.6011 25.9966 63.1944 26.232C62.7877 26.4675 62.4549 26.8145 62.1961 27.273C61.9496 27.7191 61.8263 28.2519 61.8263 28.8716C61.8263 29.4912 61.9496 30.0364 62.1961 30.5073C62.4549 30.9658 62.7877 31.3191 63.1944 31.5669C63.6135 31.8147 64.0571 31.9386 64.5255 31.9386C65.0062 31.9386 65.456 31.821 65.875 31.5855C66.2941 31.3376 66.6269 30.9907 66.8734 30.5446C67.1199 30.086 67.2431 29.5407 67.2431 28.9088Z" fill="currentColor"></path><path d="M57.6674 19.893H55.6718C55.5082 19.893 55.3755 20.0259 55.3755 20.1897V22.2368C55.3755 22.4007 55.5082 22.5336 55.6718 22.5336H57.6674C57.8311 22.5336 57.9637 22.4007 57.9637 22.2368V20.1897C57.9637 20.0259 57.8311 19.893 57.6674 19.893Z" fill="currentColor"></path><path d="M73.3217 19.893H71.3261C71.1624 19.893 71.0298 20.0259 71.0298 20.1897V22.2368C71.0298 22.4007 71.1624 22.5336 71.3261 22.5336H73.3217C73.4854 22.5336 73.618 22.4007 73.618 22.2368V20.1897C73.618 20.0259 73.4854 19.893 73.3217 19.893Z" fill="currentColor"></path></g></svg></a></div>
+    <div class="topbar-right">
+      <span class="topbar-label">HTML Table Generator</span>
+      <div class="topbar-dot"></div>
+      <span class="topbar-date" id="updated-date"></span>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-kicker">Content Tools</div>
+      <h1 class="hero-title">HTML table <span class="accent">generator</span></h1>
+      <p class="hero-sub">Build a table visually, then copy clean HTML, either styled with inline CSS or completely unstyled so it picks up your site's own styles. Paste it straight into a CMS. No stylesheets and no stray span tags.</p>
+    </div>
+  </section>
+
+  <div class="main-wrap">
+    <div class="layout">
+
+      <!-- SETTINGS -->
+      <aside class="sidebar">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4h7M12 4h2M2 12h2M7 12h7"/><circle cx="10.5" cy="4" r="1.5"/><circle cx="5.5" cy="12" r="1.5"/></svg></div>
+            <span class="panel-title">Table settings</span>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Structure</div>
+            <div class="grid2 field">
+              <div>
+                <label class="field-label">Rows</label>
+                <div class="stepper"><button type="button" data-step="rows" data-d="-1">&minus;</button><span id="rows-count">0</span><button type="button" data-step="rows" data-d="1">+</button></div>
+              </div>
+              <div>
+                <label class="field-label">Columns</label>
+                <div class="stepper"><button type="button" data-step="cols" data-d="-1">&minus;</button><span id="cols-count">0</span><button type="button" data-step="cols" data-d="1">+</button></div>
+              </div>
+            </div>
+            <label class="switch">Header row (first row)<input type="checkbox" data-k="headerRow" /></label>
+            <label class="switch">Header column (first column)<input type="checkbox" data-k="headerCol" /></label>
+            <div class="field" style="margin-top:.7rem">
+              <label class="field-label">Caption / title (optional)</label>
+              <input type="text" data-k="caption" placeholder="e.g. Pricing comparison" />
+            </div>
+          </div>
+
+          <div class="section" id="site-section">
+            <div class="section-title">Site preset</div>
+            <p class="bare-note" style="margin-top:0">Enter a website and the tool reads its stylesheets to find its likely colours and fonts, then builds a matching preset.</p>
+            <div class="site-row">
+              <input type="text" id="site-url" placeholder="e.g. paramountdigital.co.uk" autocomplete="off" />
+              <button type="button" class="btn-run btn-sm" id="site-analyse">Analyse</button>
+            </div>
+            <div class="site-status" id="site-status" hidden></div>
+            <button type="button" class="link-btn" id="site-paste-toggle">No helper running? Paste the page source instead</button>
+            <div class="site-paste" id="site-paste" hidden>
+              <textarea id="site-paste-input" placeholder="On the site, press Ctrl+U (view source), select all, copy, and paste here. You can also paste CSS files."></textarea>
+              <button type="button" class="btn-secondary btn-sm" id="site-paste-apply">Analyse pasted code</button>
+            </div>
+            <div class="site-results" id="site-results" hidden></div>
+          </div>
+
+          <div class="section" id="style-section">
+            <div class="section-title">Style</div>
+            <p class="style-note">Unstyled mode is on, so these settings aren't used in the output. Your site's CSS will style the table.</p>
+            <div class="style-fields">
+            <div class="field">
+              <label class="field-label">Preset</label>
+              <div class="filter-group" id="presets"></div>
+            </div>
+            <div class="grid2 field">
+              <div><label class="field-label">Header bg</label><label class="color-field"><input type="color" data-k="s.headBg" /><span class="hex"></span></label></div>
+              <div><label class="field-label">Header text</label><label class="color-field"><input type="color" data-k="s.headText" /><span class="hex"></span></label></div>
+              <div><label class="field-label">Body bg</label><label class="color-field"><input type="color" data-k="s.bodyBg" /><span class="hex"></span></label></div>
+              <div><label class="field-label">Body text</label><label class="color-field"><input type="color" data-k="s.bodyText" /><span class="hex"></span></label></div>
+              <div><label class="field-label">Border colour</label><label class="color-field"><input type="color" data-k="s.borderColor" /><span class="hex"></span></label></div>
+              <div><label class="field-label">Stripe colour</label><label class="color-field"><input type="color" data-k="s.stripe" /><span class="hex"></span></label></div>
+            </div>
+            <label class="switch">Striped rows<input type="checkbox" data-k="s.striped" /></label>
+            <div class="field" style="margin-top:.7rem">
+              <label class="field-label">Borders</label>
+              <div class="filter-group" data-pills="s.borderMode">
+                <button type="button" class="filter-btn" data-v="all">Grid</button>
+                <button type="button" class="filter-btn" data-v="rows">Rows only</button>
+                <button type="button" class="filter-btn" data-v="none">None</button>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Border width</label>
+              <div class="range-row"><input type="range" min="1" max="4" step="1" data-k="s.borderWidth" /><output data-out="s.borderWidth" data-unit="px"></output></div>
+            </div>
+            <div class="field">
+              <label class="field-label">Font size</label>
+              <div class="range-row"><input type="range" min="11" max="22" step="1" data-k="s.fontSize" /><output data-out="s.fontSize" data-unit="px"></output></div>
+            </div>
+            <div class="field">
+              <label class="field-label">Cell padding</label>
+              <div class="range-row"><input type="range" min="4" max="24" step="1" data-k="s.pad" /><output data-out="s.pad" data-unit="px"></output></div>
+            </div>
+            <div class="field">
+              <label class="field-label">Default text align</label>
+              <div class="filter-group" data-pills="s.align">
+                <button type="button" class="filter-btn" data-v="left">Left</button>
+                <button type="button" class="filter-btn" data-v="center">Centre</button>
+                <button type="button" class="filter-btn" data-v="right">Right</button>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Vertical align</label>
+              <div class="filter-group" data-pills="s.valign">
+                <button type="button" class="filter-btn" data-v="top">Top</button>
+                <button type="button" class="filter-btn" data-v="middle">Middle</button>
+              </div>
+            </div>
+            <div class="grid2 field">
+              <div>
+                <label class="field-label">Width</label>
+                <select data-k="s.width"><option value="100%">Full width</option><option value="auto">Fit content</option></select>
+              </div>
+              <div>
+                <label class="field-label">Font</label>
+                <select data-k="s.font" id="font-select"></select>
+              </div>
+            </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Output</div>
+            <div class="field">
+              <label class="field-label">Styling</label>
+              <div class="filter-group" data-pills="o.mode">
+                <button type="button" class="filter-btn" data-v="styled">Inline styles</button>
+                <button type="button" class="filter-btn" data-v="bare">Unstyled (use site CSS)</button>
+              </div>
+            </div>
+            <div class="bare-only">
+              <p class="bare-note">Clean semantic HTML with no <code>style</code> attributes, so your theme's table styling applies. Bold, italic, links, lists and images are kept. Colours, backgrounds, alignment and the scroll wrapper are left out, and data bars become native progress bars.</p>
+              <div class="field">
+                <label class="field-label">CSS class on table (optional)</label>
+                <input type="text" data-k="o.tableClass" placeholder="e.g. wp-block-table or table table-striped" />
+              </div>
+            </div>
+            <label class="switch styled-only">Mobile scroll wrapper<input type="checkbox" data-k="o.wrap" /></label>
+            <label class="switch">Links open in new tab<input type="checkbox" data-k="o.newTab" /></label>
+            <label class="switch">Minify code<input type="checkbox" data-k="o.minify" /></label>
+            <div style="margin-top:.9rem"><button type="button" class="btn-secondary btn-sm btn-danger" id="reset-btn">Reset table</button></div>
+          </div>
+        </div>
+      </aside>
+
+      <div>
+        <!-- EDITOR -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M1.5 6.5h13M6 6.5v7"/></svg></div>
+            <span class="panel-title">Table editor</span>
+            <div class="panel-actions">
+              <button type="button" class="btn-secondary btn-sm" id="import-toggle">Import from spreadsheet</button>
+              <div class="filter-group" data-pills="stage">
+                <button type="button" class="filter-btn" data-v="light">Light bg</button>
+                <button type="button" class="filter-btn" data-v="dark">Dark bg</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="toolbar" id="toolbar">
+            <div class="tb-group">
+              <button type="button" class="tb-btn" data-cmd="bold" data-tip="Bold (Ctrl+B)"><b>B</b></button>
+              <button type="button" class="tb-btn" data-cmd="italic" data-tip="Italic (Ctrl+I)"><i style="font-family:Georgia,serif">I</i></button>
+              <button type="button" class="tb-btn" data-cmd="underline" data-tip="Underline (Ctrl+U)"><u>U</u></button>
+              <button type="button" class="tb-btn" data-cmd="strikeThrough" data-tip="Strikethrough"><s>S</s></button>
+            </div>
+            <div class="tb-pipe"></div>
+            <div class="tb-group">
+              <button type="button" class="tb-btn" data-cmd="insertUnorderedList" data-tip="Bullet list"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="3" cy="4" r=".6" fill="currentColor"/><circle cx="3" cy="8" r=".6" fill="currentColor"/><circle cx="3" cy="12" r=".6" fill="currentColor"/><path d="M6.5 4H14M6.5 8H14M6.5 12H14"/></svg></button>
+              <button type="button" class="tb-btn" data-cmd="insertOrderedList" data-tip="Numbered list"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.3 2.8l1-.6v3.6M2.2 5.8h2.2M2.2 9.3a1 1 0 011.9.4c0 .8-1.9 1.6-1.9 2.4h2"/><path d="M6.5 4H14M6.5 8H14M6.5 12H14" stroke-width="1.6"/></svg></button>
+            </div>
+            <div class="tb-pipe"></div>
+            <div class="tb-group">
+              <button type="button" class="tb-btn" id="emoji-btn" data-tip="Emoji">&#128512;</button>
+              <button type="button" class="tb-btn" id="symbol-btn" data-tip="Symbols (° ± £ © →…)"><span style="font-family:Georgia,serif;font-size:.95rem">&Omega;</span></button>
+              <button type="button" class="tb-btn" id="image-btn" data-tip="Insert image"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><circle cx="5.5" cy="6" r="1.2"/><path d="M1.5 11.5l4-3.5 3 2.5 2-1.5 4 3"/></svg></button>
+              <button type="button" class="tb-btn" id="databar-btn" data-tip="Insert data bar (mini graph)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="1.5" y="6" width="13" height="4" rx="2"/><path d="M3.5 8H10" stroke-width="2.4"/></svg></button>
+            </div>
+            <div class="tb-pipe"></div>
+            <div class="tb-group">
+              <button type="button" class="tb-btn" id="link-btn" data-tip="Add link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6.5 9.5l3-3"/><path d="M7.5 4.5l1-1a2.8 2.8 0 014 4l-1 1"/><path d="M8.5 11.5l-1 1a2.8 2.8 0 01-4-4l1-1"/></svg></button>
+              <button type="button" class="tb-btn" data-cmd="unlink" data-tip="Remove link"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7.5 4.5l1-1a2.8 2.8 0 014 4l-1 1"/><path d="M8.5 11.5l-1 1a2.8 2.8 0 01-4-4l1-1"/><path d="M2 2l12 12"/></svg></button>
+              <label class="tb-btn color-btn styled-only" id="color-btn" data-tip="Text colour"><span class="stack"><span style="font-weight:600">A</span><span class="swatch-bar" id="color-swatch" style="background:#DA1A50"></span></span><input type="color" id="color-input" value="#DA1A50" /></label>
+              <button type="button" class="tb-btn" id="clear-btn" data-tip="Clear formatting"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 3h8M8 3l-2 10"/><path d="M10 10l4 4M14 10l-4 4"/></svg></button>
+            </div>
+            <div class="tb-pipe"></div>
+            <div class="tb-group styled-only">
+              <button type="button" class="tb-btn" data-align="left" data-tip="Align left"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h12M2 8h8M2 12h10"/></svg></button>
+              <button type="button" class="tb-btn" data-align="center" data-tip="Align centre"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h12M4 8h8M3 12h10"/></svg></button>
+              <button type="button" class="tb-btn" data-align="right" data-tip="Align right"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h12M6 8h8M4 12h10"/></svg></button>
+              <label class="tb-btn color-btn" id="cellbg-btn" data-tip="Cell background"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6.5 2.5l6 6-4.5 4.5a1 1 0 01-1.4 0L2 8.4a1 1 0 010-1.4z"/><path d="M2.3 8h9.9"/><path d="M13.5 10.5s1.2 1.5 1.2 2.3a1.2 1.2 0 01-2.4 0c0-.8 1.2-2.3 1.2-2.3z" fill="currentColor"/></svg><input type="color" id="cellbg-input" value="#fff4dc" /></label>
+              <button type="button" class="tb-btn" id="cellbg-clear" data-tip="Remove cell background"><span class="lbl">No bg</span></button>
+              <span class="tb-label" style="margin-left:.3rem">Apply to</span>
+              <select class="tb-select" id="scope-select"><option value="cell">Cell</option><option value="row">Row</option><option value="col">Column</option></select>
+            </div>
+            <div class="tb-pipe"></div>
+            <div class="tb-group">
+              <button type="button" class="tb-btn" data-op="row-above" data-tip="Insert row above"><span class="lbl">+ Row &uarr;</span></button>
+              <button type="button" class="tb-btn" data-op="row-below" data-tip="Insert row below"><span class="lbl">+ Row &darr;</span></button>
+              <button type="button" class="tb-btn" data-op="col-left" data-tip="Insert column left"><span class="lbl">+ Col &larr;</span></button>
+              <button type="button" class="tb-btn" data-op="col-right" data-tip="Insert column right"><span class="lbl">+ Col &rarr;</span></button>
+            </div>
+            <div class="emoji-pop" id="emoji-pop">
+              <div class="picker-search-wrap" id="picker-search-wrap" hidden><input type="text" id="picker-search" placeholder="Search symbols, e.g. degree, euro, arrow, tick" autocomplete="off" /></div>
+              <div class="emoji-tabs" id="emoji-tabs"></div>
+              <div class="emoji-grid" id="emoji-grid"></div>
+              <div class="emoji-foot" id="emoji-foot"></div>
+            </div>
+          </div>
+
+          <div class="insert-bar" id="image-bar">
+            <div class="f grow"><label class="field-label">Image URL</label><input type="text" id="img-url" placeholder="https://yoursite.com/wp-content/uploads/image.png" /></div>
+            <div class="f"><label class="field-label">&nbsp;</label><button type="button" class="btn-secondary btn-sm" id="img-upload-btn" style="padding:.55rem .9rem">Upload file</button><input type="file" id="img-file" accept="image/png,image/jpeg,image/gif,image/webp" hidden /></div>
+            <div class="f grow"><label class="field-label">Alt text (describe the image)</label><input type="text" id="img-alt" placeholder="e.g. Company logo" /></div>
+            <div class="f" style="width:110px"><label class="field-label">Width (px)</label><input type="text" id="img-width" placeholder="Auto" inputmode="numeric" /></div>
+            <button type="button" class="btn-run btn-sm" id="img-apply" style="padding:.55rem 1rem">Insert</button>
+            <button type="button" class="btn-secondary btn-sm btn-danger" id="img-remove" hidden>Remove</button>
+            <button type="button" class="btn-secondary btn-sm" id="img-cancel">Cancel</button>
+            <span class="upload-info" id="img-info"></span>
+          </div>
+
+          <div class="insert-bar" id="databar-bar">
+            <div class="f" style="width:120px"><label class="field-label">Value (0&ndash;100%)</label><input type="text" id="bar-value" value="75" inputmode="decimal" /></div>
+            <div class="f"><label class="field-label">Bar colour</label><label class="color-field"><input type="color" id="bar-color" value="#008475" /><span class="hex">#008475</span></label></div>
+            <div class="f"><label class="switch" style="gap:.6rem">Show % label<input type="checkbox" id="bar-label" checked /></label></div>
+            <button type="button" class="btn-run btn-sm" id="bar-apply" style="padding:.55rem 1rem">Insert</button>
+            <button type="button" class="btn-secondary btn-sm btn-danger" id="bar-remove" hidden>Remove</button>
+            <button type="button" class="btn-secondary btn-sm" id="bar-cancel">Cancel</button>
+            <span class="upload-info">A small progress-style bar inside the cell. Good for scores, ratings or completion.</span>
+          </div>
+
+          <div class="link-bar" id="link-bar">
+            <label class="field-label" style="margin:0">Link URL</label>
+            <input type="text" id="link-input" placeholder="https://example.com/page" />
+            <button type="button" class="btn-run btn-sm" id="link-apply" style="padding:.55rem 1rem">Apply</button>
+            <button type="button" class="btn-secondary btn-sm" id="link-cancel">Cancel</button>
+          </div>
+
+          <div class="import-bar" id="import-bar">
+            <p class="import-note">Copy cells from Excel or Google Sheets (or paste CSV) and drop them in here. This <strong>replaces</strong> the current table. Tip: you can also paste copied spreadsheet cells directly into any table cell to fill from that point.</p>
+            <textarea id="import-input" placeholder="Name&#9;Price&#9;Notes&#10;Basic&#9;£10&#9;Monthly"></textarea>
+            <div style="display:flex;gap:.6rem">
+              <button type="button" class="btn-run btn-sm" id="import-apply" style="padding:.55rem 1rem">Import</button>
+              <button type="button" class="btn-secondary btn-sm" id="import-cancel">Cancel</button>
+            </div>
+          </div>
+
+          <div class="stage" id="stage">
+            <div class="stage-inner">
+              <div class="ed-chart" id="ed-chart"></div>
+              <div class="ed-caption" id="ed-caption"></div>
+              <div class="ed-wrap"><table class="ed" id="ed"></table></div>
+              <button type="button" class="add-col" id="add-col">+ Column</button>
+              <button type="button" class="add-row" id="add-row">+ Row</button>
+            </div>
+          </div>
+          <div class="stage-foot">
+            <span>Click a cell to type. <span class="kbd">Tab</span> next cell &middot; <span class="kbd">Enter</span> line break &middot; hover a row number or column letter to delete it.</span>
+            <span><span class="data-only-tag" id="data-only-tag">Chart only: table is the data source, not in output</span> <span id="active-label">No cell selected</span></span>
+          </div>
+        </div>
+
+        <!-- CHART -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 14h12"/><path d="M4.5 11V8M8 11V4M11.5 11V6.5" stroke-width="2.2"/></svg></div>
+            <span class="panel-title">Chart from table data</span>
+            <div class="panel-actions"><label class="switch" style="gap:.6rem">Show chart<input type="checkbox" data-k="chart.on" /></label></div>
+          </div>
+          <p class="chart-off-note" id="chart-off-note">Turn this on to build a bar or column chart from one of your table's columns. It's pure HTML with inline styles (no images or scripts), so it pastes like the table and updates as you edit.</p>
+          <div class="chart-body panel-body" id="chart-body">
+            <div class="chart-grid">
+              <div>
+                <label class="field-label">Chart type</label>
+                <div class="filter-group" data-pills="chart.type">
+                  <button type="button" class="filter-btn" data-v="bars">Bars</button>
+                  <button type="button" class="filter-btn" data-v="columns">Columns</button>
+                </div>
+              </div>
+              <div><label class="field-label">Labels from column</label><select data-k="chart.labelCol" data-num="1" id="chart-label-col"></select></div>
+              <div><label class="field-label">Values from column</label><select data-k="chart.valueCol" data-num="1" id="chart-value-col"></select></div>
+              <div class="span2"><label class="field-label">Chart title (optional)</label><input type="text" data-k="chart.title" placeholder="e.g. Monthly sessions" /></div>
+              <div><label class="field-label">Bar colour</label><label class="color-field"><input type="color" data-k="chart.color" /><span class="hex"></span></label></div>
+              <div>
+                <label class="field-label">Position</label>
+                <div class="filter-group" data-pills="chart.pos">
+                  <button type="button" class="filter-btn" data-v="above">Above table</button>
+                  <button type="button" class="filter-btn" data-v="below">Below table</button>
+                </div>
+              </div>
+              <div>
+                <label class="field-label">Column chart height</label>
+                <div class="range-row"><input type="range" min="100" max="360" step="10" data-k="chart.height" /><output data-out="chart.height" data-unit="px"></output></div>
+              </div>
+              <div><label class="switch">Show values<input type="checkbox" data-k="chart.showValues" /></label></div>
+              <div><label class="switch">Truncate long labels<input type="checkbox" data-k="chart.truncate" /></label></div>
+              <div class="trunc-opt">
+                <label class="field-label">Max label length</label>
+                <div class="range-row"><input type="range" min="4" max="40" step="1" data-k="chart.maxLabel" /><output data-out="chart.maxLabel" data-unit=" chars"></output></div>
+              </div>
+              <div class="trunc-opt">
+                <label class="field-label">Show full label</label>
+                <div class="filter-group" data-pills="chart.reveal">
+                  <button type="button" class="filter-btn" data-v="hover">On hover</button>
+                  <button type="button" class="filter-btn" data-v="click">On click</button>
+                  <button type="button" class="filter-btn" data-v="both">Both</button>
+                </div>
+              </div>
+              <p class="trunc-opt trunc-hint span2" id="trunc-hint"></p>
+            </div>
+            <div class="chart-export">
+              <div class="chart-grid">
+                <div>
+                  <label class="field-label">Include in output</label>
+                  <div class="filter-group" data-pills="chart.output">
+                    <button type="button" class="filter-btn" data-v="both">Table + chart</button>
+                    <button type="button" class="filter-btn" data-v="chart">Chart only</button>
+                  </div>
+                </div>
+                <div>
+                  <label class="field-label">Image width</label>
+                  <select data-k="chart.imgW" data-num="1"><option value="600">600px (email)</option><option value="800">800px (docs / web)</option><option value="1200">1200px (slides)</option></select>
+                </div>
+                <div><label class="switch">Transparent image background<input type="checkbox" data-k="chart.transparent" /></label></div>
+              </div>
+              <div class="actions">
+                <button type="button" class="btn-secondary btn-sm" id="chart-copy-html"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Copy chart HTML</button>
+                <button type="button" class="btn-secondary btn-sm" id="chart-copy-img"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5"/></svg>Copy as image</button>
+                <button type="button" class="btn-secondary btn-sm" id="chart-png"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M4.5 6.5L8 10l3.5-3.5M2.5 13.5h11"/></svg>Download PNG</button>
+                <button type="button" class="btn-secondary btn-sm" id="chart-svg"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v8M4.5 6.5L8 10l3.5-3.5M2.5 13.5h11"/></svg>Download SVG</button>
+              </div>
+              <p class="trunc-hint" id="export-hint"></p>
+            </div>
+            <p class="chart-warn" id="chart-warn" hidden></p>
+            <p class="chart-warn bare-only">Unstyled mode: the chart is left out of the HTML output, because a chart can't be drawn without styling. Use Copy chart HTML (which keeps its own inline styles) or the image exports.</p>
+          </div>
+        </div>
+
+        <!-- OUTPUT -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg></div>
+            <span class="panel-title">Output</span>
+            <div class="panel-actions">
+              <div class="filter-group" data-pills="tab">
+                <button type="button" class="filter-btn" data-v="code">HTML code</button>
+                <button type="button" class="filter-btn" data-v="preview">Preview output</button>
+              </div>
+            </div>
+          </div>
+          <pre class="code-pre" id="code-out"></pre>
+          <div class="preview-stage" id="preview-out" hidden></div>
+          <div class="output-actions">
+            <button type="button" class="btn-run" id="copy-code"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 4L2 8l3.5 4M10.5 4L14 8l-3.5 4"/></svg>Copy HTML code</button>
+            <button type="button" class="btn-secondary" id="copy-rich"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5"/></svg>Copy with styling</button>
+            <span class="output-meta" id="output-meta"></span>
+          </div>
+          <p class="note"><strong>Copy HTML code</strong> is for code/HTML blocks (WordPress Custom HTML, Shopify &lt;/&gt; view, Webflow Embed). <strong>Copy with styling</strong> puts the exact same HTML on the clipboard as rich content for visual editors, Google Docs or email. It's written straight to the clipboard, not copied from the page, so the browser can't add any extra spans or styles.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-left"><svg viewBox="0 0 139 47" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="lt-foot" class="paramount-logo"><title id="lt-foot">Paramount Digital</title><g><path class="logo-tile tile-1" d="M2.14973 24.2673H7.69928C8.82722 24.2673 9.74163 25.1829 9.74163 26.3124V31.9093C9.74163 33.0388 8.82722 33.9544 7.69928 33.9544H2.14973C1.0218 33.9544 0.107422 33.0388 0.107422 31.9093V26.3124C0.107422 25.1829 1.0218 24.2673 2.14973 24.2673Z" fill="#01C6A3" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-2" d="M19.728 36.3229H14.1786C13.0506 36.3229 12.1362 37.2385 12.1362 38.368V43.9653C12.1362 45.0948 13.0506 46.0105 14.1786 46.0105H19.728C20.856 46.0105 21.7704 45.0948 21.7704 43.9653V38.368C21.7704 37.2385 20.856 36.3229 19.728 36.3229Z" fill="#008475" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-3" d="M19.728 24.2672H14.1786C13.0506 24.2672 12.1362 25.1829 12.1362 26.3124V31.9096C12.1362 33.0392 13.0506 33.9548 14.1786 33.9548H19.728C20.856 33.9548 21.7704 33.0392 21.7704 31.9096V26.3124C21.7704 25.1829 20.856 24.2672 19.728 24.2672Z" fill="#01C6A3" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-4" d="M19.728 12.2115H14.1786C13.0506 12.2115 12.1362 13.1271 12.1362 14.2567V19.8539C12.1362 20.9834 13.0506 21.8991 14.1786 21.8991H19.728C20.856 21.8991 21.7704 20.9834 21.7704 19.8539V14.2567C21.7704 13.1271 20.856 12.2115 19.728 12.2115Z" fill="#E8A828" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-5" d="M31.7183 0.155762H26.1688C25.0409 0.155762 24.1265 1.07142 24.1265 2.20093V7.7982C24.1265 8.92771 25.0409 9.84337 26.1688 9.84337H31.7183C32.8462 9.84337 33.7606 8.92771 33.7606 7.7982V2.20093C33.7606 1.07142 32.8462 0.155762 31.7183 0.155762Z" fill="#DA1A50" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-6" d="M31.7183 12.2115H26.1688C25.0409 12.2115 24.1265 13.1271 24.1265 14.2567V19.8539C24.1265 20.9834 25.0409 21.8991 26.1688 21.8991H31.7183C32.8462 21.8991 33.7606 20.9834 33.7606 19.8539V14.2567C33.7606 13.1271 32.8462 12.2115 31.7183 12.2115Z" fill="#E8A828" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-7" d="M31.7183 24.2672H26.1688C25.0409 24.2672 24.1265 25.1829 24.1265 26.3124V31.9096C24.1265 33.0392 25.0409 33.9548 26.1688 33.9548H31.7183C32.8462 33.9548 33.7606 33.0392 33.7606 31.9096V26.3124C33.7606 25.1829 32.8462 24.2672 31.7183 24.2672Z" fill="#01C6A3" stroke="#DEDEDE" stroke-width="0.238183"></path><path class="logo-tile tile-8" d="M31.7183 36.3229H26.1688C25.0409 36.3229 24.1265 37.2385 24.1265 38.368V43.9653C24.1265 45.0948 25.0409 46.0105 26.1688 46.0105H31.7183C32.8462 46.0105 33.7606 45.0948 33.7606 43.9653V38.368C33.7606 37.2385 32.8462 36.3229 31.7183 36.3229Z" fill="#008475" stroke="#DEDEDE" stroke-width="0.238183"></path><path d="M51.9001 4.78326C51.9001 5.59526 51.7055 6.35649 51.3161 7.06698C50.9412 7.77748 50.3426 8.35022 49.5206 8.78521C48.7131 9.2202 47.6892 9.43766 46.4489 9.43766H43.918V15.2667H40.8896V0.0853271H46.4489C47.6171 0.0853271 48.6121 0.288325 49.4341 0.694319C50.2561 1.10031 50.869 1.65856 51.2728 2.36904C51.691 3.07954 51.9001 3.88428 51.9001 4.78326ZM46.3191 6.97999C47.1556 6.97999 47.7757 6.79149 48.1795 6.41449C48.5833 6.02299 48.7851 5.47926 48.7851 4.78326C48.7851 3.30429 47.9631 2.5648 46.3191 2.5648H43.918V6.97999H46.3191Z" fill="currentColor"></path><path d="M51.8574 9.81983C51.8574 8.78632 52.0593 7.8697 52.4632 7.06995C52.8793 6.2702 53.436 5.65501 54.1335 5.22437C54.8433 4.79374 55.6325 4.57843 56.5014 4.57843C57.2601 4.57843 57.9209 4.73222 58.4838 5.03982C59.0589 5.34741 59.5178 5.73498 59.8605 6.20252V4.74453H62.4486V14.9689H59.8605V13.4741C59.53 13.9539 59.0712 14.3538 58.4838 14.6737C57.9086 14.9813 57.2417 15.1351 56.4831 15.1351C55.6264 15.1351 54.8433 14.9136 54.1335 14.4707C53.436 14.0278 52.8793 13.4064 52.4632 12.6067C52.0593 11.7946 51.8574 10.8657 51.8574 9.81983ZM59.8605 9.85679C59.8605 9.22925 59.7381 8.69405 59.4933 8.25111C59.2486 7.79587 58.9182 7.45136 58.5022 7.21759C58.0861 6.97152 57.6395 6.84848 57.1622 6.84848C56.685 6.84848 56.2444 6.96536 55.8406 7.19913C55.4368 7.4329 55.1063 7.77741 54.8494 8.23265C54.6047 8.67559 54.4823 9.20467 54.4823 9.81983C54.4823 10.4351 54.6047 10.9764 54.8494 11.4439C55.1063 11.8992 55.4368 12.2498 55.8406 12.4959C56.2567 12.742 56.6971 12.8651 57.1622 12.8651C57.6395 12.8651 58.0861 12.7481 58.5022 12.5144C58.9182 12.2683 59.2486 11.9238 59.4933 11.4808C59.7381 11.0256 59.8605 10.4842 59.8605 9.85679Z" fill="currentColor"></path><path d="M70.0645 9.81983C70.0645 8.78632 70.2664 7.8697 70.6702 7.06995C71.0863 6.2702 71.6431 5.65501 72.3406 5.22437C73.0503 4.79374 73.8396 4.57843 74.7084 4.57843C75.4671 4.57843 76.1279 4.73222 76.6909 5.03982C77.266 5.34741 77.7249 5.73498 78.0675 6.20252V4.74453H80.6556V14.9689H78.0675V13.4741C77.7371 13.9539 77.2782 14.3538 76.6909 14.6737C76.1157 14.9813 75.4488 15.1351 74.6901 15.1351C73.8335 15.1351 73.0503 14.9136 72.3406 14.4707C71.6431 14.0278 71.0863 13.4064 70.6702 12.6067C70.2664 11.7946 70.0645 10.8657 70.0645 9.81983ZM78.0675 9.85679C78.0675 9.22925 77.9451 8.69405 77.7004 8.25111C77.4556 7.79587 77.1252 7.45136 76.7092 7.21759C76.2931 6.97152 75.8465 6.84848 75.3692 6.84848C74.892 6.84848 74.4514 6.96536 74.0476 7.19913C73.6438 7.4329 73.3134 7.77741 73.0565 8.23265C72.8117 8.67559 72.6893 9.20467 72.6893 9.81983C72.6893 10.4351 72.8117 10.9764 73.0565 11.4439C73.3134 11.8992 73.6438 12.2498 74.0476 12.4959C74.4637 12.742 74.9043 12.8651 75.3692 12.8651C75.8465 12.8651 76.2931 12.7481 76.7092 12.5144C77.1252 12.2683 77.4556 11.9238 77.7004 11.4808C77.9451 11.0256 78.0675 10.4842 78.0675 9.85679Z" fill="currentColor"></path><path d="M81.5464 28.8716C81.5464 27.8307 81.7497 26.9075 82.1565 26.102C82.5754 25.2965 83.1362 24.6769 83.8388 24.2431C84.5537 23.8094 85.3486 23.5925 86.2236 23.5925C86.9878 23.5925 87.6534 23.7474 88.2203 24.0572C88.7996 24.367 89.2617 24.7574 89.6069 25.2283V23.7598H92.2138V34.0577H89.6069V32.5521C89.2741 33.0354 88.8118 33.4381 88.2203 33.7603C87.641 34.0701 86.9693 34.225 86.2051 34.225C85.3424 34.225 84.5537 34.0019 83.8388 33.5558C83.1362 33.1097 82.5754 32.4839 82.1565 31.6784C81.7497 30.8605 81.5464 29.925 81.5464 28.8716ZM89.6069 28.9088C89.6069 28.2768 89.4836 27.7377 89.2371 27.2916C88.9906 26.8331 88.6578 26.4861 88.2388 26.2507C87.8197 26.0028 87.3699 25.8789 86.8892 25.8789C86.4085 25.8789 85.9648 25.9966 85.5581 26.232C85.1514 26.4675 84.8186 26.8145 84.5598 27.273C84.3133 27.7191 84.19 28.2519 84.19 28.8716C84.19 29.4912 84.3133 30.0364 84.5598 30.5073C84.8186 30.9658 85.1514 31.3191 85.5581 31.5669C85.9771 31.8147 86.4209 31.9386 86.8892 31.9386C87.3699 31.9386 87.8197 31.821 88.2388 31.5855C88.6578 31.3376 88.9906 30.9907 89.2371 30.5446C89.4836 30.086 89.6069 29.5407 89.6069 28.9088Z" fill="currentColor"></path><path d="M46.1876 19.0687C47.7571 19.0687 49.1338 19.3771 50.318 19.994C51.5165 20.6108 52.4367 21.493 53.0787 22.6406C53.735 23.7739 54.0631 25.0937 54.0631 26.5999C54.0631 28.1062 53.735 29.4259 53.0787 30.5592C52.4367 31.6781 51.5165 32.546 50.318 33.1629C49.1338 33.7797 47.7571 34.0881 46.1876 34.0881H40.9658V19.0687H46.1876ZM46.0806 31.5275C47.65 31.5275 48.8627 31.0971 49.7188 30.2364C50.5748 29.3757 51.0028 28.1636 51.0028 26.5999C51.0028 25.0363 50.5748 23.817 49.7188 22.9419C48.8627 22.0525 47.65 21.6078 46.0806 21.6078H43.9619V31.5275H46.0806Z" fill="currentColor"></path><path d="M105.143 15.1351C104.163 15.1351 103.282 14.9198 102.5 14.4891C101.716 14.0462 101.098 13.4248 100.646 12.6251C100.206 11.8254 99.9844 10.9025 99.9844 9.85679C99.9844 8.81093 100.211 7.88814 100.664 7.0884C101.129 6.28865 101.759 5.67347 102.555 5.24283C103.35 4.79989 104.237 4.57843 105.216 4.57843C106.195 4.57843 107.082 4.79989 107.878 5.24283C108.673 5.67347 109.297 6.28865 109.75 7.0884C110.215 7.88814 110.447 8.81093 110.447 9.85679C110.447 10.9025 110.209 11.8254 109.732 12.6251C109.267 13.4248 108.63 14.0462 107.823 14.4891C107.027 14.9198 106.134 15.1351 105.143 15.1351ZM105.143 12.8835C105.608 12.8835 106.042 12.7728 106.446 12.5512C106.862 12.3175 107.193 11.973 107.437 11.5178C107.682 11.0625 107.804 10.5088 107.804 9.85679C107.804 8.88475 107.547 8.14038 107.034 7.62361C106.532 7.09456 105.914 6.83002 105.18 6.83002C104.445 6.83002 103.828 7.09456 103.326 7.62361C102.836 8.14038 102.591 8.88475 102.591 9.85679C102.591 10.8288 102.83 11.5793 103.307 12.1084C103.797 12.6251 104.409 12.8835 105.143 12.8835Z" fill="currentColor"></path><path d="M121.033 4.74457V14.969H118.445V13.6772C118.115 14.12 117.68 14.4707 117.142 14.7291C116.616 14.9752 116.041 15.0982 115.416 15.0982C114.621 15.0982 113.917 14.9322 113.306 14.5999C112.694 14.2554 112.21 13.7571 111.855 13.105C111.512 12.4406 111.342 11.6532 111.342 10.7426V4.74457H113.911V10.3735C113.911 11.1856 114.113 11.8131 114.517 12.256C114.921 12.6866 115.471 12.902 116.169 12.902C116.878 12.902 117.435 12.6866 117.84 12.256C118.243 11.8131 118.445 11.1856 118.445 10.3735V4.74457H121.033Z" fill="currentColor"></path><path d="M127.875 4.59692C129.086 4.59692 130.065 4.98449 130.812 5.75963C131.558 6.52247 131.931 7.59289 131.931 8.97092V14.969H129.361V9.32154C129.361 8.50953 129.16 7.88819 128.756 7.45755C128.352 7.01462 127.802 6.79315 127.104 6.79315C126.394 6.79315 125.831 7.01462 125.415 7.45755C125.012 7.88819 124.809 8.50953 124.809 9.32154V14.969H122.24V4.74457H124.809V6.01801C125.152 5.57508 125.587 5.23057 126.113 4.98449C126.651 4.72611 127.238 4.59692 127.875 4.59692Z" fill="currentColor"></path><path d="M136.334 6.86697V11.8131C136.334 12.1576 136.413 12.4098 136.572 12.5698C136.743 12.7174 137.025 12.7912 137.417 12.7912H138.609V14.969H136.994C134.828 14.969 133.745 13.9109 133.745 11.7947V6.86697H132.534V4.74456H133.745V2.21613H136.334V4.74456H138.609V6.86697H136.334Z" fill="currentColor"></path><path d="M94.7518 4.59692C96.0001 4.59692 97.0038 4.98449 97.7628 5.75963C98.5337 6.52247 98.9191 7.59289 98.9191 8.97092V14.969H96.3494V9.32154C96.3494 8.52183 96.1472 7.91279 95.7437 7.49447C95.3394 7.06384 94.7888 6.84851 94.0911 6.84851C93.3943 6.84851 92.8374 7.06384 92.4213 7.49447C92.0169 7.91279 91.8156 8.52183 91.8156 9.32154V14.969H89.2455V9.32154C89.2455 8.52183 89.0436 7.91279 88.6397 7.49447C88.2359 7.06384 87.6852 6.84851 86.9878 6.84851C86.278 6.84851 85.7152 7.06384 85.2991 7.49447C84.8952 7.91279 84.6933 8.52183 84.6933 9.32154V14.969H82.1235V4.74457H84.6933V5.9811C85.0238 5.55046 85.4459 5.21211 85.9598 4.96604C86.4861 4.71996 87.0612 4.59692 87.6853 4.59692C88.4807 4.59692 89.1904 4.76918 89.8145 5.11368C90.4383 5.44589 90.9221 5.92573 91.265 6.55323C91.5954 5.96264 92.072 5.48895 92.6966 5.13214C93.3329 4.77533 94.018 4.59692 94.7518 4.59692Z" fill="currentColor"></path><path d="M66.4863 6.33176C66.8166 5.79039 67.245 5.36591 67.7711 5.05832C68.3096 4.75072 68.9214 4.59692 69.6067 4.59692V7.30991H68.9275C68.1199 7.30991 67.508 7.50062 67.092 7.88203C66.6882 8.26346 66.4863 8.92786 66.4863 9.87523V14.969H63.9165V4.74457H66.4863V6.33176Z" fill="currentColor"></path><path d="M57.9638 23.7598V34.0577H55.3755V23.7598H57.9638Z" fill="currentColor"></path><path d="M73.618 23.7598V34.0577H71.0298V23.7598H73.618Z" fill="currentColor"></path><path d="M96.2801 20.3025V34.0578H93.6924V20.3025H96.2801Z" fill="currentColor"></path><path d="M78.6657 25.8974V30.8792C78.6657 31.2261 78.7458 31.4801 78.9061 31.6412C79.0786 31.79 79.362 31.8643 79.7565 31.8643H80.9581V34.0577H79.3313C77.1498 34.0577 76.059 32.992 76.059 30.8606V25.8974H74.8389V23.7598H76.059V21.2133H78.6657V23.7598H80.9581V25.8974H78.6657Z" fill="currentColor"></path><path d="M63.86 23.5925C64.6241 23.5925 65.2958 23.7474 65.875 24.0572C66.4543 24.3547 66.9104 24.745 67.2431 25.2283V23.7598H69.8499V34.1321C69.8499 35.0863 69.6588 35.9351 69.2767 36.6787C68.8947 37.4346 68.3215 38.0294 67.5574 38.4631C66.7932 38.9092 65.8689 39.1323 64.7843 39.1323C63.33 39.1323 62.1345 38.7915 61.1978 38.1099C60.2734 37.4283 59.7496 36.499 59.6263 35.3217H62.1961C62.3317 35.7926 62.6213 36.1644 63.065 36.437C63.521 36.722 64.0695 36.8645 64.7104 36.8645C65.4622 36.8645 66.0722 36.6353 66.5406 36.1768C67.0089 35.7306 67.2431 35.0491 67.2431 34.1321V32.5335C66.9104 33.0168 66.4482 33.4195 65.8566 33.7417C65.2773 34.0639 64.6117 34.225 63.86 34.225C62.9972 34.225 62.2084 34.0019 61.4935 33.5558C60.7787 33.1097 60.2118 32.4839 59.7928 31.6784C59.386 30.8605 59.1826 29.925 59.1826 28.8716C59.1826 27.8307 59.386 26.9075 59.7928 26.102C60.2118 25.2965 60.7725 24.6769 61.475 24.2431C62.1899 23.8094 62.9849 23.5925 63.86 23.5925ZM67.2431 28.9088C67.2431 28.2768 67.1199 27.7377 66.8734 27.2916C66.6269 26.8331 66.2941 26.4861 65.875 26.2507C65.456 26.0028 65.0062 25.8789 64.5255 25.8789C64.0448 25.8789 63.6011 25.9966 63.1944 26.232C62.7877 26.4675 62.4549 26.8145 62.1961 27.273C61.9496 27.7191 61.8263 28.2519 61.8263 28.8716C61.8263 29.4912 61.9496 30.0364 62.1961 30.5073C62.4549 30.9658 62.7877 31.3191 63.1944 31.5669C63.6135 31.8147 64.0571 31.9386 64.5255 31.9386C65.0062 31.9386 65.456 31.821 65.875 31.5855C66.2941 31.3376 66.6269 30.9907 66.8734 30.5446C67.1199 30.086 67.2431 29.5407 67.2431 28.9088Z" fill="currentColor"></path><path d="M57.6674 19.893H55.6718C55.5082 19.893 55.3755 20.0259 55.3755 20.1897V22.2368C55.3755 22.4007 55.5082 22.5336 55.6718 22.5336H57.6674C57.8311 22.5336 57.9637 22.4007 57.9637 22.2368V20.1897C57.9637 20.0259 57.8311 19.893 57.6674 19.893Z" fill="currentColor"></path><path d="M73.3217 19.893H71.3261C71.1624 19.893 71.0298 20.0259 71.0298 20.1897V22.2368C71.0298 22.4007 71.1624 22.5336 71.3261 22.5336H73.3217C73.4854 22.5336 73.618 22.4007 73.618 22.2368V20.1897C73.618 20.0259 73.4854 19.893 73.3217 19.893Z" fill="currentColor"></path></g></svg><span class="footer-text">HTML Table Generator</span></div>
+    <span class="footer-text">Clean inline-CSS tables &middot; <a href="https://paramountdigital.co.uk" target="_blank" rel="noopener">Paramount Digital</a></span>
+  </footer>
+
+  <div class="toast" id="toast"><i></i><span></span></div>
+
+  <script>
+  (function(){
+    'use strict';
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+    const STORE = 'pd-table-generator-v1';
+
+    document.getElementById('updated-date').textContent = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    try { document.execCommand('styleWithCSS', false, false); } catch(e){}
+
+    /* ---------- config ---------- */
+    const PRESETS = {
+      paramount:{label:'Paramount', headBg:'#008475', headText:'#ffffff', bodyBg:'#ffffff', bodyText:'#1a2230', borderColor:'#dfe5ea', stripe:'#f3f8f8', borderMode:'all',  striped:true},
+      minimal:  {label:'Minimal',   headBg:'#ffffff', headText:'#111111', bodyBg:'#ffffff', bodyText:'#333333', borderColor:'#e3e7eb', stripe:'#f7f8f9', borderMode:'rows', striped:false},
+      classic:  {label:'Classic',   headBg:'#f2f4f6', headText:'#111111', bodyBg:'#ffffff', bodyText:'#222222', borderColor:'#cfd6dd', stripe:'#f8f9fa', borderMode:'all',  striped:false},
+      amber:    {label:'Warm',      headBg:'#E8A828', headText:'#1a1a1a', bodyBg:'#ffffff', bodyText:'#2a2a2a', borderColor:'#efe3c8', stripe:'#fdf8ec', borderMode:'rows', striped:true},
+      dark:     {label:'Dark',      headBg:'#0d1117', headText:'#01C6A3', bodyBg:'#131920', bodyText:'#e8edf2', borderColor:'#243347', stripe:'#1a2230', borderMode:'rows', striped:true}
+    };
+    const FONTS = {
+      inherit:'Inherit from site',
+      arial:'Arial, Helvetica, sans-serif',
+      verdana:'Verdana, Geneva, sans-serif',
+      tahoma:'Tahoma, Geneva, sans-serif',
+      trebuchet:"'Trebuchet MS', Helvetica, sans-serif",
+      georgia:'Georgia, serif',
+      times:"'Times New Roman', Times, serif"
+    };
+    const FONT_LABELS = {inherit:'Inherit (site)', arial:'Arial', verdana:'Verdana', tahoma:'Tahoma', trebuchet:'Trebuchet', georgia:'Georgia', times:'Times'};
+    const fontStack = k => k === 'inherit' ? '' : k === 'site' ? (state.site?.font?.stack || '') : (FONTS[k] || '');
+    const fontLabel = k => k === 'site' ? (state.site?.font?.name || 'Site font') : (FONT_LABELS[k] || 'Inherit (site)');
+    const STAGE_FONT = "'Segoe UI', Helvetica, Arial, sans-serif";
+
+    const blankCell = () => ({h:'', a:'', bg:''});
+    function makeCells(r, c){
+      return Array.from({length:r}, (_, i) => Array.from({length:c}, (_, j) => ({h: i === 0 ? 'Heading ' + (j+1) : '', a:'', bg:''})));
+    }
+    function defaultState(){
+      const p = PRESETS.paramount;
+      return {
+        cells: makeCells(4, 3), headerRow:true, headerCol:false, caption:'',
+        s:{preset:'paramount', headBg:p.headBg, headText:p.headText, bodyBg:p.bodyBg, bodyText:p.bodyText, borderColor:p.borderColor, stripe:p.stripe, borderMode:p.borderMode, striped:p.striped,
+           borderWidth:1, fontSize:15, pad:12, align:'left', valign:'top', width:'100%', font:'inherit'},
+        o:{wrap:true, newTab:true, minify:false, mode:'styled', tableClass:''},
+        chart:{on:false, type:'bars', labelCol:0, valueCol:1, title:'', color:'#008475', pos:'above', height:200, showValues:true, truncate:false, maxLabel:14, reveal:'both', output:'both', imgW:800, transparent:false},
+        stage:'light', tab:'code'
+      };
+    }
+    function loadState(){
+      const d = defaultState();
+      try {
+        const raw = localStorage.getItem(STORE);
+        if (!raw) return d;
+        const p = JSON.parse(raw);
+        if (!Array.isArray(p.cells) || !p.cells.length || !Array.isArray(p.cells[0]) || !p.cells[0].length) return d;
+        return Object.assign(d, p, {s:Object.assign(d.s, p.s||{}), o:Object.assign(d.o, p.o||{}), chart:Object.assign(d.chart, p.chart||{})});
+      } catch(e){ return d; }
+    }
+    let state = loadState();
+    let active = null; // {r,c}
+    function save(){ try { localStorage.setItem(STORE, JSON.stringify(state)); } catch(e){} }
+
+    /* ---------- helpers ---------- */
+    const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const escAttr = s => esc(s).replace(/"/g,'&quot;');
+    const stripTags = s => s.replace(/<[^>]*>/g,'');
+    const colName = i => { let s=''; i++; while(i>0){ const m=(i-1)%26; s=String.fromCharCode(65+m)+s; i=Math.floor((i-1)/26); } return s; };
+    const nRows = () => state.cells.length;
+    const nCols = () => state.cells[0].length;
+
+    function normColor(v){
+      if (!v) return null;
+      v = String(v).trim().toLowerCase();
+      if (/^#[0-9a-f]{3}$/.test(v)) return '#' + v.slice(1).split('').map(x=>x+x).join('');
+      if (/^#[0-9a-f]{6}$/.test(v)) return v;
+      const m = v.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+      if (m) return '#' + [m[1],m[2],m[3]].map(n => Math.min(255,+n).toString(16).padStart(2,'0')).join('');
+      return null;
+    }
+    function safeHref(h){
+      if (!h) return null;
+      h = h.trim();
+      if (/^(https?:|mailto:|tel:)/i.test(h)) return h;
+      if (/^[\/#?]/.test(h)) return h;
+      if (/^[a-z][a-z0-9+.-]*:/i.test(h)) return null; // javascript:, data: etc.
+      if (/^[\w-]+(\.[\w-]+)+/.test(h)) return 'https://' + h;
+      return null;
+    }
+
+    function safeSrc(src){
+      if (!src) return null;
+      src = src.trim();
+      if (/^data:image\/(png|jpe?g|gif|webp);base64,[a-z0-9+\/=\s]+$/i.test(src)) return src.replace(/\s+/g, '');
+      if (/^https?:\/\//i.test(src) || /^\/[^\/]/.test(src)) return src;
+      if (/^[a-z][a-z0-9+.-]*:/i.test(src)) return null;
+      if (/^[\w-]+(\.[\w-]+)+\//.test(src)) return 'https://' + src;
+      return null;
+    }
+    const clampBar = v => { v = parseFloat(String(v).replace(',', '.')); return isNaN(v) ? 0 : Math.round(Math.min(100, Math.max(0, v)) * 10) / 10; };
+    const barToken = (v, c, l) => `<span data-bar="${clampBar(v)}" data-color="${normColor(c) || '#008475'}" data-label="${l ? 1 : 0}"></span>`;
+
+    /* ---------- the sanitiser ----------
+       Only these survive: strong, em, u, s, a[href], br, ul/ol/li, img[src|alt|width],
+       colour spans made by our own colour button, and our own data-bar tokens.
+       Every other tag or style the browser invents is unwrapped to plain text. */
+    function cleanNodes(nodes){ let out=''; nodes.forEach(n => out += cleanNode(n)); return out; }
+    const hasContent = h => stripTags(h).trim() !== '' || /<(img|span data-bar)/.test(h);
+    const isList = n => n && (n.nodeName === 'UL' || n.nodeName === 'OL');
+    const isBlock = n => n && /^(DIV|P|H[1-6]|BLOCKQUOTE|UL|OL)$/.test(n.nodeName);
+    function cleanNode(n){
+      if (n.nodeType === 3) return esc(n.nodeValue.replace(/ /g,' ').replace(/​/g,'').replace(/[\r\n]+/g,' '));
+      if (n.nodeType !== 1) return '';
+      const t = n.nodeName;
+      if (t === 'BR') return '<br>';
+      if (/^(SCRIPT|STYLE|TEMPLATE|NOSCRIPT|IFRAME|OBJECT|EMBED|SVG|META|LINK|TITLE|VIDEO|AUDIO|CANVAS)$/.test(t)) return '';
+      if (t === 'IMG') {
+        const src = safeSrc(n.getAttribute('src'));
+        if (!src) return '';
+        const w = parseInt(n.getAttribute('width'), 10);
+        return `<img src="${escAttr(src)}" alt="${escAttr(n.getAttribute('alt') || '')}"${w > 0 ? ` width="${Math.min(w, 2000)}"` : ''}>`;
+      }
+      if (t === 'SPAN' && n.hasAttribute('data-bar')) return barToken(n.getAttribute('data-bar'), n.getAttribute('data-color'), n.getAttribute('data-label') !== '0');
+      if (t === 'UL' || t === 'OL') {
+        const tag = t.toLowerCase();
+        let items = '';
+        [...n.childNodes].forEach(ch => {
+          if (ch.nodeName === 'LI') items += cleanNode(ch);
+          else { const x = tidy(cleanNode(ch)); if (hasContent(x)) items += `<li>${x}</li>`; }
+        });
+        return items ? `<${tag}>${items}</${tag}>` : '';
+      }
+      const inner = cleanNodes([...n.childNodes]);
+      const content = hasContent(inner);
+      const wrap = tag => content ? `<${tag}>${inner}</${tag}>` : inner;
+      switch (t){
+        case 'B': case 'STRONG': return wrap('strong');
+        case 'I': case 'EM': return wrap('em');
+        case 'U': case 'INS': return wrap('u');
+        case 'S': case 'STRIKE': case 'DEL': return wrap('s');
+        case 'A': {
+          const href = safeHref(n.getAttribute('href'));
+          return href && content ? `<a href="${escAttr(href)}">${inner}</a>` : inner;
+        }
+        case 'FONT': { // only produced by our own text-colour button
+          const col = normColor(n.getAttribute('color'));
+          return col && stripTags(inner).trim() ? `<span style="color:${col};">${inner}</span>` : inner;
+        }
+        case 'LI':
+          if (isList(n.parentNode)) { const x = tidy(inner); return hasContent(x) ? `<li>${x}</li>` : ''; }
+          return (n.previousSibling ? '<br>' : '') + inner;
+        case 'DIV': case 'P': case 'H1': case 'H2': case 'H3': case 'H4': case 'H5': case 'H6': case 'BLOCKQUOTE': {
+          // block elements become line breaks: one before (unless the previous sibling was a block too) and one after
+          const prev = n.previousSibling, next = n.nextSibling;
+          const body = inner === '<br>' ? '' : inner;
+          return (prev && !isBlock(prev) ? '<br>' : '') + body + (next && !isList(next) ? '<br>' : '');
+        }
+        default: // SPAN and anything else the browser invents: unwrap, keep contents only
+          return inner;
+      }
+    }
+    function tidy(html){
+      let prev;
+      do { prev = html; html = html.replace(/<\/(strong|em|u|s)><\1>/g, ''); } while (html !== prev);
+      return html.replace(/\s{2,}/g,' ')
+        .replace(/(<br>\s*)+(<(ul|ol)>)/g, '$2').replace(/(<\/(ul|ol)>)(\s*<br>)+/g, '$1')
+        .replace(/<li>(\s|<br>)+/g, '<li>').replace(/(\s|<br>)+<\/li>/g, '</li>')
+        .replace(/^(\s|<br>)+|(\s|<br>)+$/g, '');
+    }
+    const cleanEl = el => tidy(cleanNodes([...el.childNodes]));
+    function cleanString(html){ const d = document.createElement('div'); d.innerHTML = html; return cleanEl(d); }
+
+    /* ---------- styles (single source of truth for editor + output) ---------- */
+    function css(o){ return Object.entries(o).filter(([,v]) => v !== '' && v != null).map(([k,v]) => `${k}:${v};`).join(''); }
+    function tableCSS(){
+      const s = state.s;
+      return {'width': s.width, 'border-collapse':'collapse', 'border-spacing':'0',
+        'font-family': fontStack(s.font), 'font-size': s.fontSize + 'px', 'line-height':'1.5',
+        'color': s.bodyText, 'background-color': s.bodyBg};
+    }
+    const isHeadRow = r => state.headerRow && r === 0;
+    const isHeadCol = (r, c) => state.headerCol && c === 0 && !isHeadRow(r);
+    function cellCSS(r, c){
+      const s = state.s, cell = state.cells[r][c];
+      const bodyIdx = state.headerRow ? r - 1 : r;
+      const o = {'padding': `${s.pad}px ${Math.round(s.pad * 1.3)}px`, 'text-align': cell.a || s.align, 'vertical-align': s.valign};
+      const b = `${s.borderWidth}px solid ${s.borderColor}`;
+      if (s.borderMode === 'all') o['border'] = b;
+      else { o['border'] = 'none'; if (s.borderMode === 'rows') o['border-bottom'] = isHeadRow(r) ? `${s.borderWidth + 1}px solid ${s.borderColor}` : b; }
+      if (isHeadRow(r)) { o['background-color'] = s.headBg; o['color'] = s.headText; o['font-weight'] = '600'; }
+      else {
+        if (s.striped && bodyIdx % 2 === 1) o['background-color'] = s.stripe;
+        if (isHeadCol(r, c)) o['font-weight'] = '600';
+      }
+      if (cell.bg) o['background-color'] = cell.bg;
+      return o;
+    }
+    const captionCSS = () => ({'caption-side':'top', 'text-align':'left', 'padding':'0 0 10px', 'font-weight':'600'});
+
+    /* ---------- output ---------- */
+    const cellText = h => { const d = document.createElement('div'); d.innerHTML = h.replace(/<br>|<\/li>/g, ' '); return d.textContent.replace(/\s+/g, ' ').trim(); };
+    function barHTML(v, color, label){
+      const track = css({'flex':'1', 'min-width':'60px', 'height':'10px', 'background-color':'rgba(127,127,127,0.2)', 'border-radius':'5px', 'overflow':'hidden'});
+      const fill = css({'width': v + '%', 'height':'100%', 'background-color': color, 'border-radius':'5px'});
+      const lbl = label ? `<span style="${css({'font-size':'0.85em', 'min-width':'3em', 'text-align':'right', 'white-space':'nowrap'})}">${v}%</span>` : '';
+      return `<div style="${css({'display':'flex', 'align-items':'center', 'gap':'8px', 'margin':'2px 0'})}"><div style="${track}"><div style="${fill}"></div></div>${lbl}</div>`;
+    }
+    const isBare = () => state.o.mode === 'bare';
+    const safeClass = v => String(v || '').replace(/[^\w\- ]/g, '').trim().replace(/\s+/g, ' ');
+    function cellContent(r, c){
+      let h = state.cells[r][c].h;
+      if (state.o.newTab) h = h.replace(/<a href="([^"]*)">/g, '<a href="$1" target="_blank" rel="noopener">');
+      if (isBare()) {
+        // no styling at all: bars become native <progress>, colour spans are unwrapped (they're the only spans left)
+        return h.replace(/<span data-bar="([\d.]+)" data-color="(#[0-9a-f]{6})" data-label="([01])"><\/span>/g, (_, v, col, l) => `<progress value="${v}" max="100">${v}%</progress>` + (l === '1' ? ` ${v}%` : ''))
+          .replace(/<span style="color:#[0-9a-f]{6};">/g, '').replace(/<\/span>/g, '');
+      }
+      return h
+        .replace(/<ul>/g, `<ul style="${css({'margin':'0', 'padding':'0 0 0 1.2em', 'list-style-type':'disc'})}">`)
+        .replace(/<ol>/g, `<ol style="${css({'margin':'0', 'padding':'0 0 0 1.4em', 'list-style-type':'decimal'})}">`)
+        .replace(/<li>/g, `<li style="${css({'margin':'0 0 4px'})}">`)
+        .replace(/<img ([^>]*)>/g, (_, a) => `<img ${a} style="${css({'max-width':'100%', 'height':'auto', 'vertical-align':'middle', 'border':'0'})}">`)
+        .replace(/<span data-bar="([\d.]+)" data-color="(#[0-9a-f]{6})" data-label="([01])"><\/span>/g, (_, v, col, l) => barHTML(v, col, l === '1'));
+    }
+
+    /* chart built from table data */
+    function chartData(){
+      const ch = state.chart, out = [];
+      for (let r = state.headerRow ? 1 : 0; r < nRows(); r++){
+        const raw = cellText(state.cells[r][ch.valueCol]?.h || '');
+        const m = raw.replace(/,/g, '').match(/-?\d*\.?\d+/);
+        if (!m) continue;
+        out.push({label: cellText(state.cells[r][ch.labelCol]?.h || ''), raw, v: Math.max(0, parseFloat(m[0]))});
+      }
+      return out;
+    }
+    // Long labels: shortened with "…", full text revealed on hover (title tooltip) and/or click (<details>). No JS needed on the live site.
+    function chartLabel(full){
+      const ch = state.chart, max = Math.max(4, +ch.maxLabel || 14);
+      if (!ch.truncate || full.length <= max) return esc(full);
+      const short = esc(full.slice(0, max - 1).trimEnd() + '…');
+      const hover = ch.reveal !== 'click', click = ch.reveal !== 'hover';
+      const title = hover ? ` title="${escAttr(full)}"` : '';
+      const hint = {'border-bottom':'1px dotted currentColor', 'cursor': click ? 'pointer' : 'help'};
+      if (!click) return `<span${title} style="${css(hint)}">${short}</span>`;
+      return `<details style="${css({'display':'inline-block', 'vertical-align':'top', 'margin':'0', 'padding':'0'})}">`
+        + `<summary${title} style="${css({'display':'inline', 'list-style':'none', ...hint})}">${short}</summary>`
+        + `<span style="${css({'display':'block', 'white-space':'normal', 'max-width':'220px', 'font-size':'0.85em', 'opacity':'0.8', 'margin':'3px 0 0'})}">${esc(full)}</span></details>`;
+    }
+    function emitChart(push, open, close, alone){
+      const ch = state.chart, s = state.s, data = chartData();
+      if (!ch.on || !data.length) return false;
+      const max = Math.max(...data.map(x => x.v));
+      if (max <= 0) return false;
+      const base = {'width':'100%', 'border-collapse':'collapse', 'border-spacing':'0', 'font-family': fontStack(s.font),
+        'font-size': s.fontSize + 'px', 'line-height':'1.4', 'color': s.bodyText, 'background':'none', 'border':'none', 'margin': alone ? '0' : ch.pos === 'below' ? '24px 0 0' : '0 0 24px'};
+      const td0 = {'border':'none', 'background':'none'};
+      const title = ch.title.trim();
+      if (ch.type === 'columns') base['table-layout'] = 'fixed';
+      open(`<table style="${css(base)}">`);
+      if (title) push(`<caption style="${css(captionCSS())}">${esc(title)}</caption>`);
+      open('<tbody>');
+      if (ch.type === 'bars') {
+        data.forEach(x => {
+          const pct = Math.round(x.v / max * 1000) / 10;
+          open('<tr>');
+          push(`<td style="${css({...td0, 'padding':'5px 12px 5px 0', 'white-space':'nowrap', 'width':'1%', 'vertical-align':'middle'})}">${chartLabel(x.label)}</td>`);
+          push(`<td style="${css({...td0, 'padding':'5px 0', 'vertical-align':'middle'})}"><div style="${css({'width': pct + '%', 'min-width':'2px', 'height':'22px', 'background-color': ch.color, 'border-radius':'0 4px 4px 0'})}"></div></td>`);
+          if (ch.showValues) push(`<td style="${css({...td0, 'padding':'5px 0 5px 10px', 'white-space':'nowrap', 'width':'1%', 'text-align':'right', 'vertical-align':'middle', 'font-weight':'600'})}">${esc(x.raw)}</td>`);
+          close('</tr>');
+        });
+      } else {
+        open('<tr>');
+        data.forEach(x => {
+          const h = Math.max(2, Math.round(ch.height * x.v / max));
+          const val = ch.showValues ? `<div style="${css({'font-size':'0.85em', 'font-weight':'600', 'margin':'0 0 4px'})}">${esc(x.raw)}</div>` : '';
+          push(`<td style="${css({...td0, 'height': (ch.height + (ch.showValues ? 26 : 0)) + 'px', 'padding':'0 6px', 'vertical-align':'bottom', 'text-align':'center'})}">${val}<div style="${css({'height': h + 'px', 'max-width':'64px', 'margin':'0 auto', 'background-color': ch.color, 'border-radius':'4px 4px 0 0'})}"></div></td>`);
+        });
+        close('</tr>');
+        open('<tr>');
+        data.forEach(x => push(`<td style="${css({...td0, 'border-top': `1px solid ${s.borderColor}`, 'padding':'6px 4px 0', 'text-align':'center', 'vertical-align':'top', 'font-size':'0.85em'})}">${chartLabel(x.label)}</td>`));
+        close('</tr>');
+      }
+      close('</tbody>');
+      close('</table>');
+      return true;
+    }
+    function buildHTML(minify, parts){
+      parts = Object.assign({table:true, chart:true}, parts);
+      const L = []; let d = 0;
+      const push = s => L.push((minify ? '' : '  '.repeat(d)) + s);
+      const open = s => { push(s); d++; };
+      const close = s => { d--; push(s); };
+      const bare = isBare();
+      const chartOn = parts.chart && state.chart.on && (!bare || !parts.table);
+      const tableOn = parts.table && !(chartOnly() && !bare);
+      if (chartOn && (state.chart.pos === 'above' || !tableOn)) emitChart(push, open, close, !tableOn);
+      if (tableOn) {
+        const cls = safeClass(state.o.tableClass);
+        if (state.o.wrap && !bare) open('<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">');
+        open(bare ? `<table${cls ? ` class="${cls}"` : ''}>` : `<table style="${css(tableCSS())}">`);
+        if (state.caption.trim()) push(bare ? `<caption>${esc(state.caption.trim())}</caption>` : `<caption style="${css(captionCSS())}">${esc(state.caption.trim())}</caption>`);
+        const rowHTML = r => {
+          open('<tr>');
+          for (let c = 0; c < nCols(); c++){
+            const hr = isHeadRow(r), hc = isHeadCol(r, c);
+            const tag = hr || hc ? 'th' : 'td';
+            const scope = hr ? ' scope="col"' : hc ? ' scope="row"' : '';
+            push(bare ? `<${tag}${scope}>${cellContent(r, c)}</${tag}>` : `<${tag}${scope} style="${css(cellCSS(r, c))}">${cellContent(r, c)}</${tag}>`);
+          }
+          close('</tr>');
+        };
+        let start = 0;
+        if (state.headerRow) { open('<thead>'); rowHTML(0); close('</thead>'); start = 1; }
+        if (start < nRows()) { open('<tbody>'); for (let r = start; r < nRows(); r++) rowHTML(r); close('</tbody>'); }
+        close('</table>');
+        if (state.o.wrap && !bare) close('</div>');
+      }
+      if (chartOn && tableOn && state.chart.pos === 'below') emitChart(push, open, close, false);
+      return L.join(minify ? '' : '\n');
+    }
+    const chartOnly = () => state.chart.on && state.chart.output === 'chart';
+    function buildPlain(){
+      if (chartOnly() && !isBare()) return (state.chart.title.trim() ? state.chart.title.trim() + '\n' : '') + chartData().map(x => `${x.label}\t${x.raw}`).join('\n');
+      const lines = [];
+      if (state.caption.trim()) lines.push(state.caption.trim());
+      state.cells.forEach(row => lines.push(row.map(c => { const d = document.createElement('div'); d.innerHTML = c.h.replace(/<br>/g,' '); return d.textContent; }).join('\t')));
+      return lines.join('\n');
+    }
+    function highlight(code){
+      let out = '', last = 0, m;
+      const re = /<\/?[a-zA-Z][^>]*>/g;
+      while ((m = re.exec(code))){
+        out += esc(code.slice(last, m.index));
+        const t = m[0].match(/^<(\/?)([a-zA-Z0-9]+)([\s\S]*?)>$/);
+        if (!t) out += esc(m[0]);
+        else {
+          const attrs = t[3].replace(/\s+([a-zA-Z-]+)(?:="([^"]*)")?/g, (_, n, v) => ` <span class="hl-a">${n}</span>` + (v !== undefined ? `=<span class="hl-v">"${esc(v)}"</span>` : ''));
+          out += `<span class="hl-t">&lt;${t[1]}${t[2]}</span>${attrs}<span class="hl-t">&gt;</span>`;
+        }
+        last = re.lastIndex;
+      }
+      return out + esc(code.slice(last));
+    }
+    let outTimer = null;
+    function updateOutput(){
+      clearTimeout(outTimer);
+      outTimer = setTimeout(() => {
+        const code = buildHTML(state.o.minify);
+        const codeEl = $('#code-out');
+        codeEl.innerHTML = highlight(code);
+        codeEl.classList.toggle('wrap', state.o.minify);
+        $('#preview-out').innerHTML = (isBare() ? '<p class="preview-note">Browser-default preview. On your site, your theme\u2019s table styles take over.</p>' : '') + '<div class="pv">' + buildHTML(true) + '</div>';
+        $('#preview-out').classList.toggle('bare-preview', isBare());
+        const edChart = $('#ed-chart');
+        edChart.innerHTML = state.chart.on ? buildHTML(true, {table:false}) : '';
+        edChart.style.order = state.chart.pos === 'below' ? '10' : '-1';
+        edChart.style.padding = state.chart.pos === 'below' ? '16px 0 0 30px' : '0 0 16px 30px';
+        updateChartUI();
+        const bytes = new Blob([code]).size;
+        $('#output-meta').textContent = (isBare() ? 'Unstyled · ' : '') + (chartOnly() && !isBare() ? 'Chart only · ' : `${nRows()} × ${nCols()} · `) + `${bytes.toLocaleString()} bytes`;
+        $('#stage').classList.toggle('data-only', chartOnly() && !isBare());
+        $('#data-only-tag').classList.toggle('show', chartOnly() && !isBare());
+        save();
+      }, 60);
+    }
+
+    /* ---------- editor ---------- */
+    const ed = $('#ed');
+    function editorCellCSS(r, c){
+      if (isBare()) return css({'font-family': STAGE_FONT, 'font-size':'15px', 'line-height':'1.5', 'color': state.stage === 'dark' ? '#e8edf2' : '#2a2a2a', 'padding':'8px 12px',
+        'border':`1px dashed ${state.stage === 'dark' ? '#3a4552' : '#cfd6dd'}`, 'text-align':'left', 'vertical-align':'top', 'font-weight': isHeadRow(r) || isHeadCol(r, c) ? '600' : '400'});
+      const t = tableCSS();
+      return css(Object.assign({'font-family': t['font-family'] || STAGE_FONT, 'font-size': t['font-size'], 'line-height': t['line-height'], 'color': t.color, 'background-color': t['background-color']}, cellCSS(r, c)));
+    }
+    function renderEditor(focus){
+      const R = nRows(), C = nCols();
+      let h = '<thead><tr><th class="h h-corner"></th>';
+      for (let c = 0; c < C; c++) h += `<th class="h h-col"><span class="num">${colName(c)}</span>${C > 1 ? `<button type="button" class="x" data-del-col="${c}" title="Delete column ${colName(c)}">&times;</button>` : ''}</th>`;
+      h += '</tr></thead><tbody>';
+      for (let r = 0; r < R; r++){
+        h += `<tr><td class="h h-row"><span class="num">${r+1}</span>${R > 1 ? `<button type="button" class="x" data-del-row="${r}" title="Delete row ${r+1}">&times;</button>` : ''}</td>`;
+        for (let c = 0; c < C; c++){
+          const ph = isHeadRow(r) ? 'Heading' : 'Type…';
+          h += `<td class="cell" data-r="${r}" data-c="${c}" style="${escAttr(editorCellCSS(r, c))}"><div class="cell-edit" contenteditable="true" spellcheck="true" data-r="${r}" data-c="${c}" data-ph="${ph}">${state.cells[r][c].h}</div></td>`;
+        }
+        h += '</tr>';
+      }
+      ed.innerHTML = h + '</tbody>';
+      hydrate(ed);
+      ed.style.width = state.s.width === '100%' ? '100%' : 'auto';
+      $('#rows-count').textContent = R;
+      $('#cols-count').textContent = C;
+      if (active && (active.r >= R || active.c >= C)) active = null;
+      if (focus) focusCell(focus.r, focus.c, focus.end !== false);
+      else markActive();
+      restyleEditor();
+      updateOutput();
+    }
+    function restyleEditor(){
+      $$('#ed td.cell').forEach(td => { td.style.cssText = editorCellCSS(+td.dataset.r, +td.dataset.c); });
+      ed.style.width = state.s.width === '100%' ? '100%' : 'auto';
+      const cap = $('#ed-caption');
+      cap.textContent = state.caption.trim();
+      cap.style.cssText = `font-family:${fontStack(state.s.font) || STAGE_FONT};font-size:${state.s.fontSize}px;color:${state.s.bodyText};`;
+      if (state.s.bodyBg.toLowerCase() === '#ffffff' || state.stage === 'dark' || isBare()) cap.style.color = state.stage === 'dark' ? '#e8edf2' : isBare() ? '#2a2a2a' : state.s.bodyText;
+      if (isBare()) cap.style.fontFamily = STAGE_FONT;
+      markActive();
+    }
+    const editAt = (r, c) => ed.querySelector(`.cell-edit[data-r="${r}"][data-c="${c}"]`);
+    function focusCell(r, c, toEnd){
+      const el = editAt(r, c);
+      if (!el) return;
+      el.focus();
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(!toEnd);
+      const sel = getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      setActive(r, c);
+    }
+    function setActive(r, c){ active = {r, c}; markActive(); }
+    function scopeTargets(){
+      if (!active) return [];
+      const sc = $('#scope-select').value, out = [];
+      if (sc === 'row') for (let c = 0; c < nCols(); c++) out.push([active.r, c]);
+      else if (sc === 'col') for (let r = 0; r < nRows(); r++) out.push([r, active.c]);
+      else out.push([active.r, active.c]);
+      return out;
+    }
+    function markActive(){
+      $$('#ed td.cell').forEach(td => td.classList.remove('active', 'in-scope'));
+      if (!active) { $('#active-label').textContent = 'No cell selected'; return; }
+      const sc = $('#scope-select').value;
+      if (sc !== 'cell') scopeTargets().forEach(([r, c]) => { const td = editAt(r, c)?.parentElement; if (td) td.classList.add('in-scope'); });
+      const td = editAt(active.r, active.c)?.parentElement;
+      if (td) td.classList.add('active');
+      $('#active-label').textContent = `Cell ${colName(active.c)}${active.r + 1}` + (sc === 'row' ? ' · whole row' : sc === 'col' ? ' · whole column' : '');
+      const a = state.cells[active.r][active.c].a || state.s.align;
+      $$('[data-align]').forEach(b => b.classList.toggle('on', b.dataset.align === a));
+    }
+    // turn stored data-bar tokens into a visible (non-editable) bar inside the editor
+    function hydrate(root){
+      root.querySelectorAll('.cell-edit span[data-bar]').forEach(sp => {
+        sp.contentEditable = 'false';
+        sp.className = 'pd-bar';
+        sp.innerHTML = barHTML(clampBar(sp.dataset.bar), normColor(sp.dataset.color) || '#008475', sp.dataset.label !== '0');
+      });
+    }
+    function syncCell(el){
+      const r = +el.dataset.r, c = +el.dataset.c;
+      if (!state.cells[r] || !state.cells[r][c]) return;
+      state.cells[r][c].h = cleanEl(el);
+      updateOutput();
+    }
+
+    ed.addEventListener('focusin', e => { const el = e.target.closest('.cell-edit'); if (el) setActive(+el.dataset.r, +el.dataset.c); });
+    ed.addEventListener('input', e => { const el = e.target.closest('.cell-edit'); if (el) syncCell(el); });
+    ed.addEventListener('click', e => {
+      const dr = e.target.closest('[data-del-row]'), dc = e.target.closest('[data-del-col]');
+      if (dr) return deleteRow(+dr.dataset.delRow);
+      if (dc) return deleteCol(+dc.dataset.delCol);
+      const img = e.target.closest('.cell-edit img'), bar = e.target.closest('.cell-edit .pd-bar');
+      if (img) { const el = img.closest('.cell-edit'); setActive(+el.dataset.r, +el.dataset.c); return openImageForm(img); }
+      if (bar) { const el = bar.closest('.cell-edit'); setActive(+el.dataset.r, +el.dataset.c); return openBarForm(bar); }
+      const td = e.target.closest('td.cell');
+      if (td && !e.target.closest('.cell-edit')) focusCell(+td.dataset.r, +td.dataset.c, true);
+    });
+    ed.addEventListener('keydown', e => {
+      const el = e.target.closest('.cell-edit');
+      if (!el) return;
+      const r = +el.dataset.r, c = +el.dataset.c;
+      if (e.key === 'Enter') {
+        const sel = getSelection();
+        const n = sel.anchorNode && (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentElement);
+        if (n && n.closest('li') && el.contains(n)) return; // let the browser add the next bullet (Enter on an empty bullet ends the list)
+        e.preventDefault(); document.execCommand('insertLineBreak'); syncCell(el); return;
+      }
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        let i = r * nCols() + c + (e.shiftKey ? -1 : 1);
+        if (i < 0) return;
+        if (i >= nRows() * nCols()) { state.cells.push(Array.from({length:nCols()}, blankCell)); renderEditor({r: nRows() - 1, c: 0}); return; }
+        focusCell(Math.floor(i / nCols()), i % nCols(), true);
+      }
+    });
+    ed.addEventListener('paste', e => {
+      const el = e.target.closest('.cell-edit');
+      if (!el) return;
+      e.preventDefault();
+      let text = (e.clipboardData || window.clipboardData).getData('text/plain') || '';
+      text = text.replace(/\r\n?/g, '\n');
+      if (text.includes('\t')) { // spreadsheet cells: spread across the grid
+        const grid = parseDelimited(text, '\t');
+        fillGrid(grid, +el.dataset.r, +el.dataset.c);
+        return;
+      }
+      document.execCommand('insertHTML', false, esc(text.replace(/\n+$/, '')).replace(/\n/g, '<br>'));
+      syncCell(el);
+    });
+    // Strip anything dropped in (drag & drop of rich content)
+    ed.addEventListener('drop', e => { if (e.target.closest('.cell-edit')) e.preventDefault(); });
+
+    /* ---------- structure ops ---------- */
+    function insertRow(at){ state.cells.splice(at, 0, Array.from({length:nCols()}, blankCell)); renderEditor({r: at, c: active ? active.c : 0}); }
+    function insertCol(at){ state.cells.forEach(row => row.splice(at, 0, blankCell())); renderEditor({r: active ? active.r : 0, c: at}); }
+    function deleteRow(r){ if (nRows() <= 1) return; state.cells.splice(r, 1); active = null; renderEditor(); toast(`Row ${r + 1} deleted`); }
+    function deleteCol(c){ if (nCols() <= 1) return; state.cells.forEach(row => row.splice(c, 1)); active = null; renderEditor(); toast(`Column ${colName(c)} deleted`); }
+    $('#add-row').addEventListener('click', () => insertRow(nRows()));
+    $('#add-col').addEventListener('click', () => insertCol(nCols()));
+    $$('[data-step]').forEach(b => b.addEventListener('click', () => {
+      const d = +b.dataset.d;
+      if (b.dataset.step === 'rows') { if (d > 0) insertRow(nRows()); else deleteRow(nRows() - 1); }
+      else { if (d > 0) insertCol(nCols()); else deleteCol(nCols() - 1); }
+    }));
+    $$('[data-op]').forEach(b => {
+      b.addEventListener('mousedown', e => e.preventDefault());
+      b.addEventListener('click', () => {
+        const a = active || {r: nRows() - 1, c: nCols() - 1};
+        active = a;
+        ({'row-above': () => insertRow(a.r), 'row-below': () => insertRow(a.r + 1), 'col-left': () => insertCol(a.c), 'col-right': () => insertCol(a.c + 1)})[b.dataset.op]();
+      });
+    });
+
+    function parseDelimited(text, delim){
+      text = text.replace(/\r\n?/g, '\n').replace(/\n+$/, '');
+      if (!delim) delim = text.includes('\t') ? '\t' : ',';
+      const rows = []; let row = [], f = '', q = false;
+      for (let i = 0; i < text.length; i++){
+        const ch = text[i];
+        if (q) {
+          if (ch === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else q = false; }
+          else f += ch;
+        } else if (ch === '"' && f === '') q = true;
+        else if (ch === delim) { row.push(f); f = ''; }
+        else if (ch === '\n') { row.push(f); rows.push(row); row = []; f = ''; }
+        else f += ch;
+      }
+      row.push(f); rows.push(row);
+      return rows;
+    }
+    const textToCell = v => esc(v.trim()).replace(/\n/g, '<br>');
+    function fillGrid(grid, r0, c0){
+      const needR = r0 + grid.length, needC = c0 + Math.max(...grid.map(r => r.length));
+      while (nCols() < needC) state.cells.forEach(row => row.push(blankCell()));
+      while (nRows() < needR) state.cells.push(Array.from({length:nCols()}, blankCell));
+      grid.forEach((row, i) => row.forEach((v, j) => { state.cells[r0 + i][c0 + j].h = textToCell(v); }));
+      renderEditor({r: r0, c: c0});
+      toast(`Pasted ${grid.length} × ${Math.max(...grid.map(r => r.length))} cells`);
+    }
+
+    /* ---------- text formatting ---------- */
+    let savedRange = null;
+    function currentEdit(){
+      const sel = getSelection();
+      if (!sel.rangeCount) return null;
+      const n = sel.getRangeAt(0).commonAncestorContainer;
+      return (n.nodeType === 1 ? n : n.parentElement)?.closest('.cell-edit') || null;
+    }
+    function saveRange(){ const el = currentEdit(); savedRange = el ? {el, range: getSelection().getRangeAt(0).cloneRange()} : null; }
+    function restoreRange(){
+      if (!savedRange || !document.body.contains(savedRange.el)) return null;
+      savedRange.el.focus();
+      const sel = getSelection(); sel.removeAllRanges(); sel.addRange(savedRange.range);
+      return savedRange.el;
+    }
+    $$('[data-cmd]').forEach(b => {
+      b.addEventListener('mousedown', e => e.preventDefault());
+      b.addEventListener('click', () => {
+        const el = currentEdit();
+        if (!el) return toast('Click into a cell first', true);
+        document.execCommand(b.dataset.cmd, false, null);
+        syncCell(el); refreshToolbar();
+      });
+    });
+    function refreshToolbar(){
+      const inCell = !!currentEdit();
+      $$('[data-cmd]').forEach(b => { if (b.dataset.cmd === 'unlink') return; let on = false; try { on = inCell && document.queryCommandState(b.dataset.cmd); } catch(e){} b.classList.toggle('on', on); });
+    }
+    document.addEventListener('selectionchange', refreshToolbar);
+
+    // text colour
+    const colorInput = $('#color-input');
+    $('#color-btn').addEventListener('mousedown', saveRange);
+    colorInput.addEventListener('input', () => {
+      $('#color-swatch').style.background = colorInput.value;
+      const el = restoreRange();
+      if (!el) return;
+      if (savedRange.range.collapsed) return toast('Select some text to colour', true);
+      document.execCommand('foreColor', false, colorInput.value);
+      savedRange.range = getSelection().getRangeAt(0).cloneRange();
+      syncCell(el);
+    });
+
+    // clear formatting
+    $('#clear-btn').addEventListener('mousedown', e => e.preventDefault());
+    $('#clear-btn').addEventListener('click', () => {
+      const el = currentEdit();
+      if (!el) return toast('Click into a cell first', true);
+      const sel = getSelection();
+      if (sel.isCollapsed) { el.querySelectorAll('b,strong,i,em,u,s,strike,del,a,font').forEach(n => n.replaceWith(...n.childNodes)); }
+      else { document.execCommand('removeFormat'); document.execCommand('unlink'); }
+      syncCell(el);
+    });
+
+    // links
+    const linkBar = $('#link-bar'), linkInput = $('#link-input');
+    $('#link-btn').addEventListener('mousedown', e => e.preventDefault());
+    $('#link-btn').addEventListener('click', () => {
+      const el = currentEdit();
+      if (!el) return toast('Click into a cell first', true);
+      saveRange();
+      const node = getSelection().anchorNode;
+      const existing = (node && (node.nodeType === 1 ? node : node.parentElement))?.closest('a');
+      if (getSelection().isCollapsed && !existing) return toast('Select the text you want to link', true);
+      if (existing) { const r = document.createRange(); r.selectNodeContents(existing); savedRange.range = r; }
+      linkInput.value = existing ? existing.getAttribute('href') : '';
+      closeForms();
+      linkBar.classList.add('open');
+      linkInput.focus();
+    });
+    function applyLink(){
+      const href = safeHref(linkInput.value);
+      if (!href) return toast('Enter a valid URL (https://…, /page, mailto:…)', true);
+      const el = restoreRange();
+      if (!el) return;
+      document.execCommand('createLink', false, href);
+      syncCell(el);
+      linkBar.classList.remove('open');
+    }
+    $('#link-apply').addEventListener('click', applyLink);
+    linkInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyLink(); } if (e.key === 'Escape') linkBar.classList.remove('open'); });
+    $('#link-cancel').addEventListener('click', () => { linkBar.classList.remove('open'); restoreRange(); });
+
+    // cell-level: alignment + background
+    $$('[data-align]').forEach(b => {
+      b.addEventListener('mousedown', e => e.preventDefault());
+      b.addEventListener('click', () => {
+        if (!active) return toast('Click into a cell first', true);
+        scopeTargets().forEach(([r, c]) => state.cells[r][c].a = b.dataset.align === state.s.align ? '' : b.dataset.align);
+        restyleEditor(); updateOutput();
+      });
+    });
+    const cellbgInput = $('#cellbg-input');
+    let bgTargets = [];
+    $('#cellbg-btn').addEventListener('mousedown', () => { bgTargets = scopeTargets(); });
+    cellbgInput.addEventListener('input', () => {
+      if (!bgTargets.length) return toast('Click into a cell first', true);
+      bgTargets.forEach(([r, c]) => state.cells[r][c].bg = cellbgInput.value);
+      restyleEditor(); updateOutput();
+    });
+    $('#cellbg-clear').addEventListener('mousedown', e => e.preventDefault());
+    $('#cellbg-clear').addEventListener('click', () => {
+      if (!active) return toast('Click into a cell first', true);
+      scopeTargets().forEach(([r, c]) => state.cells[r][c].bg = '');
+      restyleEditor(); updateOutput();
+    });
+    $('#scope-select').addEventListener('change', () => { markActive(); if (active) focusCell(active.r, active.c, true); });
+
+    /* ---------- emoji ---------- */
+    const EMOJI = {
+      'Table favourites': '✅ ❌ ✔️ ✖️ ⭐ 🌟 ⚠️ ℹ️ ❗ ❓ 👍 👎 🔥 💡 🏆 🥇 🥈 🥉 🎯 🚀 📈 📉 📊 💰 💷 💶 💵 🔒 🔓 🔗 📌 📍 ⏱️ 📅 🆕 🆓 💯',
+      'Status': '🟢 🟡 🟠 🔴 🔵 🟣 ⚫ ⚪ 🟩 🟨 🟧 🟥 🟦 🟪 ⬛ ⬜ ☑️ 🔘 ⭕ 🚫 ⛔ ♻️ 🔄 ⏳ ⌛ 🔔 🔕',
+      'Arrows & symbols': '➡️ ⬅️ ⬆️ ⬇️ ↗️ ↘️ ↔️ ↕️ 🔼 🔽 ▶️ ◀️ ➕ ➖ ✳️ ❇️ ✴️ ©️ ®️ ™️ #️⃣ *️⃣ 0️⃣ 1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ 6️⃣ 7️⃣ 8️⃣ 9️⃣ 🔟',
+      'Smileys & people': '😀 😃 😄 😁 😊 🙂 😉 😍 🤩 😎 🤔 😐 😬 😢 😮 😱 🤯 🥳 👏 🙌 🙏 💪 🤝 👋 ✋ 👉 👀 🧠 👤 👥',
+      'Objects': '📱 💻 🖥️ ⌨️ 🖱️ 📧 ✉️ 📞 ☎️ 📦 🛒 🛍️ 🏷️ 🧾 📄 📝 📁 📂 🗂️ 📋 📎 ✂️ 🔍 🔧 ⚙️ 🧰 🏠 🏢 🌍 🚚 ✈️ ☕',
+      'Nature & food': '🌱 🌿 🍀 🌸 🌻 🌞 🌙 ☁️ 🌧️ ⛄ 🌈 ⚡ 💧 🍎 🍊 🍋 🍌 🍇 🍓 🥑 🍕 🍔 🍰 🍷 🍺'
+    };
+    // symbols: "char name" entries separated by |, names power the search box
+    const SYMBOLS = {
+      'Common & maths': '° degree|± plus minus|× multiply times|÷ divide|≈ approximately|≠ not equal|≤ less than or equal|≥ greater than or equal|∞ infinity|√ square root|∑ sum sigma|% percent|‰ per mille|¹ superscript one|² squared superscript two|³ cubed superscript three|½ half|⅓ third|⅔ two thirds|¼ quarter|¾ three quarters|⅛ eighth|− minus|∓ minus plus|∝ proportional|∴ therefore|∵ because|′ prime minutes feet|″ double prime seconds inches|№ numero number',
+      'Currency': '£ pound sterling gbp|€ euro eur|$ dollar usd|¢ cent|¥ yen yuan|₹ rupee inr|₩ won|₽ rouble|₺ lira|₪ shekel|₫ dong|₱ peso|₦ naira|₿ bitcoin|¤ currency',
+      'Units & Greek': '°C celsius degrees centigrade|°F fahrenheit degrees|K kelvin|m² square metres|m³ cubic metres|km² square kilometres|cm² square centimetres|µ micro mu|µm micrometre micron|Ω ohm omega|Å angstrom|ℓ litre|α alpha|β beta|γ gamma|δ delta|Δ delta change|ε epsilon|θ theta|λ lambda|μ mu|π pi|ρ rho|σ sigma|τ tau|φ phi|χ chi|ψ psi|ω omega',
+      'Arrows': '← left arrow|→ right arrow|↑ up arrow|↓ down arrow|↔ left right arrow|↕ up down arrow|⇐ double left arrow|⇒ double right arrow implies|⇑ double up arrow|⇓ double down arrow|⇔ double left right arrow|↗ up right arrow increase|↘ down right arrow decrease|↙ down left arrow|↖ up left arrow|➜ heavy right arrow|➔ right arrow bold|↩ return arrow|↻ refresh clockwise|▲ up triangle|▼ down triangle|◀ left triangle|▶ right triangle play|△ up triangle outline|▽ down triangle outline',
+      'Ticks & shapes': '✓ tick check|✔ heavy tick check|✗ cross x|✘ heavy cross x|☐ checkbox empty|☑ checkbox ticked|☒ checkbox crossed|★ star filled|☆ star outline|● circle filled bullet|○ circle outline|◉ circle target|■ square filled|□ square outline|▪ small square|▫ small square outline|◆ diamond filled|◇ diamond outline|♥ heart|♦ diamond suit|♣ club|♠ spade|♪ music note|☀ sun|☁ cloud|☎ phone|✉ envelope email|✂ scissors|⚑ flag|⌂ home house',
+      'Punctuation & legal': '© copyright|® registered|™ trademark|℠ service mark|§ section|¶ paragraph pilcrow|† dagger|‡ double dagger|• bullet|· middle dot|… ellipsis|– en dash|— em dash|‘ left single quote|’ right single quote apostrophe|“ left double quote|” right double quote|« left guillemet|» right guillemet|‹ single left guillemet|› single right guillemet|¡ inverted exclamation|¿ inverted question|‽ interrobang|※ reference mark|⁂ asterism|¦ broken bar',
+      'Accented letters': 'é e acute|è e grave|ê e circumflex|ë e umlaut|á a acute|à a grave|â a circumflex|ä a umlaut|ã a tilde|å a ring|æ ae|ç c cedilla|í i acute|ì i grave|î i circumflex|ï i umlaut|ñ n tilde|ó o acute|ò o grave|ô o circumflex|ö o umlaut|õ o tilde|ø o slash|œ oe|ú u acute|ù u grave|û u circumflex|ü u umlaut|ý y acute|ÿ y umlaut|ß sharp s eszett|É E acute|È E grave|À A grave|Ç C cedilla|Ñ N tilde|Ö O umlaut|Ü U umlaut|Ø O slash|Å A ring'
+    };
+    const SYM_LIST = {};
+    Object.entries(SYMBOLS).forEach(([k, v]) => SYM_LIST[k] = v.split('|').map(e => { const i = e.indexOf(' '); return {c: e.slice(0, i), n: e.slice(i + 1)}; }));
+    const EMOJI_LIST = {};
+    Object.entries(EMOJI).forEach(([k, v]) => EMOJI_LIST[k] = v.split(' ').map(c => ({c, n: ''})));
+    const PICKERS = {
+      emoji: {sets: EMOJI_LIST, btn: '#emoji-btn', search: false,
+        foot: 'Emojis are plain text, so they paste anywhere. On Windows, <span class="kbd">Win</span> + <span class="kbd">.</span> opens the full picker.'},
+      symbols: {sets: SYM_LIST, btn: '#symbol-btn', search: true,
+        foot: 'Symbols are plain text characters, so they paste anywhere. Tip: on Windows, hold <span class="kbd">Alt</span> and type <span class="kbd">0176</span> on the number pad for °.'}
+    };
+    const RECENT_KEY = 'pd-table-generator-recent';
+    let recent = {emoji: [], symbols: []};
+    try { recent = Object.assign(recent, JSON.parse(localStorage.getItem(RECENT_KEY) || '{}')); } catch(e){}
+    const pickPop = $('#emoji-pop'), pickTabs = $('#emoji-tabs'), pickGrid = $('#emoji-grid'), pickSearch = $('#picker-search');
+    let pickMode = 'emoji', pickCat = {emoji: Object.keys(EMOJI_LIST)[0], symbols: Object.keys(SYM_LIST)[0]};
+    function pickItems(){
+      const P = PICKERS[pickMode], q = pickSearch.value.trim().toLowerCase();
+      if (P.search && q) {
+        const all = Object.values(P.sets).flat();
+        return all.filter(x => x.c.toLowerCase() === q || x.n.includes(q) || x.c.toLowerCase().includes(q));
+      }
+      if (pickCat[pickMode] === 'Recent') return recent[pickMode].map(c => Object.values(P.sets).flat().find(x => x.c === c) || {c, n: ''});
+      return P.sets[pickCat[pickMode]] || [];
+    }
+    function renderPicker(){
+      const P = PICKERS[pickMode];
+      const cats = (recent[pickMode].length ? ['Recent'] : []).concat(Object.keys(P.sets));
+      if (!cats.includes(pickCat[pickMode])) pickCat[pickMode] = cats[0];
+      const searching = P.search && pickSearch.value.trim();
+      pickTabs.innerHTML = cats.map(k => `<button type="button" class="${k === pickCat[pickMode] && !searching ? 'active' : ''}" data-cat="${escAttr(k)}">${esc(k)}</button>`).join('');
+      const items = pickItems();
+      pickGrid.className = 'emoji-grid' + (pickMode === 'symbols' ? ' symbols' : '');
+      pickGrid.innerHTML = items.length
+        ? items.map(x => `<button type="button" data-emoji="${escAttr(x.c)}" title="${escAttr(x.n ? `${x.c}  ${x.n}` : x.c)}">${esc(x.c)}</button>`).join('')
+        : '<p class="picker-empty">No matches. Try "degree", "euro", "arrow" or "tick".</p>';
+      $('#emoji-foot').innerHTML = P.foot;
+      $('#picker-search-wrap').hidden = !P.search;
+    }
+    function pickInsert(ch){
+      // if focus is in the search box, put the caret back where it was in the cell first
+      let el = document.activeElement?.classList?.contains('cell-edit') ? currentEdit() : null;
+      if (!el) el = restoreRange();
+      if (!el) return toast('Click into a cell first', true);
+      document.execCommand('insertText', false, ch);
+      syncCell(el);
+      saveRange();
+      recent[pickMode] = [ch].concat(recent[pickMode].filter(c => c !== ch)).slice(0, 16);
+      try { localStorage.setItem(RECENT_KEY, JSON.stringify(recent)); } catch(e){}
+    }
+    // mousedown preventDefault keeps the caret in the cell while picking (except in the search box)
+    pickPop.addEventListener('mousedown', e => { if (!e.target.closest('#picker-search')) e.preventDefault(); });
+    pickPop.addEventListener('click', e => {
+      const cat = e.target.closest('[data-cat]'), em = e.target.closest('[data-emoji]');
+      if (cat) { pickCat[pickMode] = cat.dataset.cat; pickSearch.value = ''; renderPicker(); return; }
+      if (em) pickInsert(em.dataset.emoji);
+    });
+    pickSearch.addEventListener('input', renderPicker);
+    pickSearch.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); const first = pickItems()[0]; if (first) pickInsert(first.c); }
+      if (e.key === 'Escape') { pickPop.classList.remove('open'); restoreRange(); }
+    });
+    function openPicker(mode){
+      if (!currentEdit()) return toast('Click into a cell first', true);
+      const wasOpen = pickPop.classList.contains('open') && pickMode === mode;
+      pickMode = mode;
+      saveRange();
+      pickSearch.value = '';
+      renderPicker();
+      const btn = $(PICKERS[mode].btn), tb = $('#toolbar');
+      pickPop.style.left = Math.max(8, Math.min(btn.offsetLeft, tb.clientWidth - 348)) + 'px';
+      pickPop.style.top = (btn.offsetTop + btn.offsetHeight + 6) + 'px';
+      pickPop.classList.toggle('open', !wasOpen);
+      $$('#emoji-btn, #symbol-btn').forEach(b => b.classList.toggle('on', !wasOpen && b === btn));
+    }
+    ['emoji', 'symbols'].forEach(m => {
+      const b = $(PICKERS[m].btn);
+      b.addEventListener('mousedown', e => e.preventDefault());
+      b.addEventListener('click', () => openPicker(m));
+    });
+    document.addEventListener('mousedown', e => {
+      if (!e.target.closest('#emoji-pop, #emoji-btn, #symbol-btn')) { pickPop.classList.remove('open'); $$('#emoji-btn, #symbol-btn').forEach(b => b.classList.remove('on')); }
+    });
+
+    /* ---------- insert forms (image + data bar) ---------- */
+    const closeForms = () => $$('.insert-bar, .link-bar').forEach(b => b.classList.remove('open'));
+    function needCell(){
+      const el = currentEdit();
+      if (!el) { toast('Click into a cell first', true); return null; }
+      saveRange();
+      return el;
+    }
+    function insertAtSaved(html){
+      const el = restoreRange();
+      if (!el) return toast('Click into a cell first', true);
+      document.execCommand('insertHTML', false, html);
+      hydrate(el);
+      syncCell(el);
+    }
+
+    // images
+    const imgBar = $('#image-bar'), imgUrl = $('#img-url'), imgAlt = $('#img-alt'), imgW = $('#img-width'), imgInfo = $('#img-info');
+    let editingImg = null, uploaded = null;
+    function resetImgForm(){ imgUrl.value = ''; imgAlt.value = ''; imgW.value = ''; uploaded = null; imgInfo.textContent = ''; imgInfo.classList.remove('warn'); imgUrl.disabled = false; }
+    function openImageForm(img){
+      closeForms(); resetImgForm();
+      editingImg = img || null;
+      if (img) {
+        const src = img.getAttribute('src') || '';
+        if (src.startsWith('data:')) { uploaded = {url: src}; imgInfo.textContent = 'Embedded image'; imgUrl.disabled = true; }
+        else imgUrl.value = src;
+        imgAlt.value = img.getAttribute('alt') || '';
+        imgW.value = img.getAttribute('width') || '';
+      }
+      $('#img-apply').textContent = img ? 'Update' : 'Insert';
+      $('#img-remove').hidden = !img;
+      imgBar.classList.add('open');
+      (img ? imgAlt : imgUrl).focus();
+    }
+    $('#image-btn').addEventListener('mousedown', e => e.preventDefault());
+    $('#image-btn').addEventListener('click', () => { if (needCell()) openImageForm(null); });
+    $('#img-upload-btn').addEventListener('click', () => $('#img-file').click());
+    $('#img-file').addEventListener('change', e => {
+      const f = e.target.files[0]; e.target.value = '';
+      if (!f) return;
+      if (!/^image\/(png|jpeg|gif|webp)$/.test(f.type)) return toast('Use a PNG, JPG, GIF or WebP image', true);
+      const rd = new FileReader();
+      rd.onload = () => {
+        uploaded = {url: rd.result};
+        imgUrl.value = ''; imgUrl.disabled = true;
+        const kb = Math.round(f.size / 1024);
+        imgInfo.textContent = `Embedded: ${f.name} (${kb.toLocaleString()} KB).` + (kb > 300 ? ' Large embedded images bloat the HTML and many editors and email clients strip them. For live pages, upload to your media library and use its URL.' : ' For live pages, a hosted URL is better.');
+        imgInfo.classList.toggle('warn', true);
+        if (!imgAlt.value) imgAlt.value = f.name.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ');
+      };
+      rd.readAsDataURL(f);
+    });
+    function applyImage(){
+      const src = uploaded ? uploaded.url : safeSrc(imgUrl.value);
+      if (!src) return toast('Enter a full image URL (https://…) or upload a file', true);
+      const w = parseInt(imgW.value, 10);
+      if (editingImg && document.body.contains(editingImg)) {
+        editingImg.setAttribute('src', src);
+        editingImg.setAttribute('alt', imgAlt.value.trim());
+        if (w > 0) editingImg.setAttribute('width', w); else editingImg.removeAttribute('width');
+        syncCell(editingImg.closest('.cell-edit'));
+      } else {
+        insertAtSaved(`<img src="${escAttr(src)}" alt="${escAttr(imgAlt.value.trim())}"${w > 0 ? ` width="${w}"` : ''}>`);
+      }
+      if (!imgAlt.value.trim()) toast('Image added. Tip: add alt text for accessibility and SEO');
+      imgBar.classList.remove('open'); editingImg = null;
+    }
+    $('#img-apply').addEventListener('click', applyImage);
+    [imgUrl, imgAlt, imgW].forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyImage(); } if (e.key === 'Escape') imgBar.classList.remove('open'); }));
+    $('#img-remove').addEventListener('click', () => {
+      if (editingImg) { const el = editingImg.closest('.cell-edit'); editingImg.remove(); syncCell(el); }
+      imgBar.classList.remove('open'); editingImg = null;
+    });
+    $('#img-cancel').addEventListener('click', () => { imgBar.classList.remove('open'); editingImg = null; });
+
+    // data bars
+    const barBar = $('#databar-bar'), barVal = $('#bar-value'), barCol = $('#bar-color'), barLbl = $('#bar-label');
+    let editingBar = null;
+    barCol.addEventListener('input', () => barCol.parentElement.querySelector('.hex').textContent = barCol.value);
+    function openBarForm(bar){
+      closeForms();
+      editingBar = bar || null;
+      if (bar) { barVal.value = bar.dataset.bar; barCol.value = normColor(bar.dataset.color) || '#008475'; barLbl.checked = bar.dataset.label !== '0'; }
+      else {
+        // prefill from the cell text if it contains a number, e.g. "75%"
+        const t = cellText(currentEdit()?.innerHTML || '').match(/\d+(\.\d+)?/);
+        if (t && +t[0] <= 100) barVal.value = t[0];
+      }
+      barCol.parentElement.querySelector('.hex').textContent = barCol.value;
+      $('#bar-apply').textContent = bar ? 'Update' : 'Insert';
+      $('#bar-remove').hidden = !bar;
+      barBar.classList.add('open');
+      barVal.focus(); barVal.select();
+    }
+    $('#databar-btn').addEventListener('mousedown', e => e.preventDefault());
+    $('#databar-btn').addEventListener('click', () => { if (needCell()) openBarForm(null); });
+    function applyBar(){
+      if (isNaN(parseFloat(barVal.value))) return toast('Enter a value between 0 and 100', true);
+      if (editingBar && document.body.contains(editingBar)) {
+        editingBar.dataset.bar = clampBar(barVal.value);
+        editingBar.dataset.color = barCol.value;
+        editingBar.dataset.label = barLbl.checked ? '1' : '0';
+        const el = editingBar.closest('.cell-edit');
+        hydrate(el); syncCell(el);
+      } else {
+        insertAtSaved(barToken(barVal.value, barCol.value, barLbl.checked).replace('<span ', '<span contenteditable="false" '));
+      }
+      barBar.classList.remove('open'); editingBar = null;
+    }
+    $('#bar-apply').addEventListener('click', applyBar);
+    barVal.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyBar(); } if (e.key === 'Escape') barBar.classList.remove('open'); });
+    $('#bar-remove').addEventListener('click', () => {
+      if (editingBar) { const el = editingBar.closest('.cell-edit'); editingBar.remove(); syncCell(el); }
+      barBar.classList.remove('open'); editingBar = null;
+    });
+    $('#bar-cancel').addEventListener('click', () => { barBar.classList.remove('open'); editingBar = null; });
+
+    /* ---------- chart image export (SVG drawn from the data; PNG rasterised from that SVG) ---------- */
+    const escXML = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const measureCtx = document.createElement('canvas').getContext('2d');
+    function chartSVG(){
+      const ch = state.chart, s = state.s, data = chartData();
+      if (!data.length) return null;
+      const max = Math.max(...data.map(x => x.v));
+      if (max <= 0) return null;
+      const fam = fontStack(s.font) || 'Arial, Helvetica, sans-serif';
+      const fs = s.fontSize, pad = 24, W = +ch.imgW || 800;
+      const small = Math.round(fs * 0.85), tfs = Math.round(fs * 1.15);
+      const meas = (t, w, size) => { measureCtx.font = `${w} ${size}px ${fam}`; return measureCtx.measureText(t).width; };
+      const fit = (t, maxW, w, size) => {
+        if (meas(t, w, size) <= maxW) return t;
+        let lo = 0, hi = t.length;
+        while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (meas(t.slice(0, mid).trimEnd() + '…', w, size) <= maxW) lo = mid; else hi = mid - 1; }
+        return t.slice(0, lo).trimEnd() + '…';
+      };
+      const short = full => ch.truncate && full.length > ch.maxLabel ? full.slice(0, Math.max(1, ch.maxLabel - 1)).trimEnd() + '…' : full;
+      // label text; if shortened, wrap with <title> so SVG viewers show the full label on hover
+      const label = (full, shown, x, y, anchor, size, extra) => {
+        const t = `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="${size}"${extra || ''}>${escXML(shown)}</text>`;
+        return shown === full ? t : `<g><title>${escXML(full)}</title>${t}</g>`;
+      };
+      const out = [];
+      let y = pad;
+      const title = ch.title.trim();
+      if (title) { out.push(`<text x="${pad}" y="${y + tfs}" font-size="${tfs}" font-weight="600">${escXML(fit(title, W - pad * 2, 600, tfs))}</text>`); y += tfs + 16; }
+
+      if (ch.type === 'bars') {
+        const rowH = Math.max(34, fs + 18), barH = 22;
+        const labels = data.map(d => short(d.label));
+        const labelW = Math.min(W * 0.4, Math.max(...labels.map(l => meas(l, 400, fs))));
+        const valW = ch.showValues ? Math.max(...data.map(d => meas(d.raw, 600, fs))) : 0;
+        const bx = pad + labelW + 12, bw = W - pad - bx - (ch.showValues ? valW + 12 : 0);
+        data.forEach((d, i) => {
+          const cy = y + i * rowH + rowH / 2;
+          out.push(label(d.label, fit(labels[i], labelW, 400, fs), pad, cy, 'start', fs, ' dominant-baseline="central"'));
+          const w = Math.max(2, bw * d.v / max), r = Math.min(4, w / 2), t = cy - barH / 2, b = cy + barH / 2;
+          out.push(`<path d="M${bx} ${t}H${(bx + w - r).toFixed(1)}Q${(bx + w).toFixed(1)} ${t} ${(bx + w).toFixed(1)} ${t + r}V${b - r}Q${(bx + w).toFixed(1)} ${b} ${(bx + w - r).toFixed(1)} ${b}H${bx}Z" fill="${ch.color}"/>`);
+          if (ch.showValues) out.push(`<text x="${W - pad}" y="${cy}" text-anchor="end" dominant-baseline="central" font-weight="600">${escXML(d.raw)}</text>`);
+        });
+        y += data.length * rowH;
+      } else {
+        const n = data.length, colW = (W - pad * 2) / n, bwid = Math.max(4, Math.min(64, colW - 12)), H = +ch.height || 200;
+        const top = y + (ch.showValues ? small + 8 : 0), base = top + H;
+        data.forEach((d, i) => {
+          const cx = pad + colW * i + colW / 2, h = Math.max(2, Math.round(H * d.v / max)), r = Math.min(4, bwid / 2, h / 2);
+          const l = (cx - bwid / 2).toFixed(1), rr = (cx + bwid / 2).toFixed(1), t = base - h;
+          out.push(`<path d="M${l} ${base}V${t + r}Q${l} ${t} ${(+l + r).toFixed(1)} ${t}H${(+rr - r).toFixed(1)}Q${rr} ${t} ${rr} ${t + r}V${base}Z" fill="${ch.color}"/>`);
+          if (ch.showValues) out.push(`<text x="${cx.toFixed(1)}" y="${t - 6}" text-anchor="middle" font-size="${small}" font-weight="600">${escXML(fit(d.raw, colW - 4, 600, small))}</text>`);
+          out.push(label(d.label, fit(short(d.label), colW - 8, 400, small), cx.toFixed(1), base + 8 + small, 'middle', small));
+        });
+        out.push(`<line x1="${pad}" x2="${W - pad}" y1="${base + 0.5}" y2="${base + 0.5}" stroke="${s.borderColor}" stroke-width="1"/>`);
+        y = base + 8 + small + 6;
+      }
+      const H = Math.ceil(y + pad);
+      const bg = ch.transparent ? '' : `<rect width="100%" height="100%" fill="${s.bodyBg}"/>`;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escXML(title || 'Chart')}" font-family="${escXML(fam)}" font-size="${fs}" fill="${s.bodyText}">`
+        + (title ? `<title>${escXML(title)}</title>` : '') + bg + out.join('') + '</svg>';
+      return {svg, w: W, h: H};
+    }
+    function svgToPng(svg, w, h, scale){
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          const c = document.createElement('canvas');
+          c.width = Math.round(w * scale); c.height = Math.round(h * scale);
+          const g = c.getContext('2d');
+          g.scale(scale, scale);
+          g.drawImage(img, 0, 0, w, h);
+          c.toBlob(b => b ? resolve(b) : reject(new Error('PNG failed')), 'image/png');
+        };
+        img.onerror = () => reject(new Error('SVG failed to render'));
+        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+      });
+    }
+    function downloadBlob(blob, name){
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    }
+    const chartFileName = ext => (state.chart.title.trim() || 'chart').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) + '.' + ext;
+    function needChart(){
+      if (!state.chart.on) { toast('Turn on "Show chart" first', true); return null; }
+      const c = chartSVG();
+      if (!c) toast(`No numbers found in column ${colName(state.chart.valueCol)}`, true);
+      return c;
+    }
+    $('#chart-svg').addEventListener('click', () => {
+      const c = needChart(); if (!c) return;
+      downloadBlob(new Blob([c.svg], {type:'image/svg+xml'}), chartFileName('svg'));
+      toast('SVG downloaded');
+    });
+    $('#chart-png').addEventListener('click', async () => {
+      const c = needChart(); if (!c) return;
+      try { downloadBlob(await svgToPng(c.svg, c.w, c.h, 2), chartFileName('png')); toast('PNG downloaded (2× resolution)'); }
+      catch(e){ toast('Could not create the PNG in this browser', true); }
+    });
+    $('#chart-copy-img').addEventListener('click', async () => {
+      const c = needChart(); if (!c) return;
+      try {
+        if (!window.ClipboardItem || !navigator.clipboard?.write) throw new Error('unsupported');
+        // pass the promise straight in so the copy stays tied to the click (needed by Safari)
+        await navigator.clipboard.write([new ClipboardItem({'image/png': svgToPng(c.svg, c.w, c.h, 2)})]);
+        toast('Chart image copied. Paste into slides, docs or email');
+      } catch(e){ toast('This browser can’t copy images. Use Download PNG instead', true); }
+    });
+    $('#chart-copy-html').addEventListener('click', async () => {
+      if (!needChart()) return;
+      const ok = await copyText(buildHTML(state.o.minify, {table:false}));
+      toast(ok ? 'Chart HTML copied' : 'Copy failed in this browser', !ok);
+    });
+
+    /* ---------- chart panel ---------- */
+    function updateChartUI(){
+      const ch = state.chart, C = nCols();
+      ch.labelCol = Math.min(Math.max(0, +ch.labelCol || 0), C - 1);
+      ch.valueCol = Math.min(Math.max(0, +ch.valueCol || 0), C - 1);
+      const opts = Array.from({length:C}, (_, c) => {
+        const head = state.headerRow ? cellText(state.cells[0][c].h) : '';
+        return `<option value="${c}">${colName(c)}${head ? ' · ' + esc(head.slice(0, 28)) : ''}</option>`;
+      }).join('');
+      ['#chart-label-col', '#chart-value-col'].forEach((id, i) => {
+        const sel = $(id);
+        if (sel.dataset.opts !== opts) { sel.innerHTML = opts; sel.dataset.opts = opts; }
+        sel.value = i ? ch.valueCol : ch.labelCol;
+      });
+      $('#chart-body').classList.toggle('open', ch.on);
+      $$('.trunc-opt').forEach(o => o.hidden = !ch.truncate);
+      $('#export-hint').textContent = `Images are a snapshot for slides, docs, email and social posts. They can't use your website's font, so they're drawn in ${state.s.font === 'inherit' ? 'Arial (pick a font under Style to change it)' : state.s.font === 'site' ? `${fontLabel('site')} if it's installed on the viewing device, otherwise a standard font` : fontLabel(state.s.font)}. `
+        + (ch.truncate ? 'Shortened labels keep a hover tooltip in the SVG; a PNG can only show the short version.' : 'Long labels are shortened automatically if they don\u2019t fit.');
+      if (ch.truncate) {
+        const cut = ch.on ? chartData().filter(x => x.label.length > ch.maxLabel).length : 0;
+        $('#trunc-hint').textContent = (cut ? `${cut} label${cut > 1 ? 's' : ''} shortened. ` : 'No labels are long enough to shorten yet. ')
+          + (ch.reveal === 'hover' ? 'Hover only shows a tooltip on desktop; touch screens can’t hover, so pick “Both” if mobile matters.'
+            : ch.reveal === 'click' ? 'Click (or tap) a shortened label to expand it.'
+            : 'Desktop users see a tooltip on hover; anyone can click or tap to expand.');
+      }
+      $('#chart-off-note').hidden = ch.on;
+      const warn = $('#chart-warn');
+      const n = ch.on ? chartData().length : 1;
+      warn.hidden = n > 0;
+      if (!n) warn.textContent = `No numbers found in column ${colName(ch.valueCol)}. Pick the column with your values, e.g. 120, £1,200 or 45%.`;
+    }
+
+    /* ---------- import ---------- */
+    const importBar = $('#import-bar');
+    $('#import-toggle').addEventListener('click', () => { importBar.classList.toggle('open'); if (importBar.classList.contains('open')) $('#import-input').focus(); });
+    $('#import-cancel').addEventListener('click', () => importBar.classList.remove('open'));
+    $('#import-apply').addEventListener('click', () => {
+      const txt = $('#import-input').value;
+      if (!txt.trim()) return toast('Paste some data first', true);
+      const grid = parseDelimited(txt);
+      const C = Math.max(...grid.map(r => r.length));
+      state.cells = grid.map(row => Array.from({length:C}, (_, j) => ({h: textToCell(row[j] || ''), a:'', bg:''})));
+      active = null;
+      renderEditor();
+      importBar.classList.remove('open');
+      $('#import-input').value = '';
+      toast(`Imported ${grid.length} rows × ${C} columns`);
+    });
+
+    /* ---------- site preset: read a site's CSS and work out its likely colours + fonts ---------- */
+    const HELPER = location.protocol.startsWith('http') ? '' : 'http://localhost:5732';
+    const colorCtx = document.createElement('canvas').getContext('2d');
+    // any CSS colour (hex, rgb, hsl, named, modern syntax) -> #rrggbb, using the browser's own parser
+    function toHex(str){
+      if (!str) return null;
+      str = String(str).trim();
+      if (/^(transparent|inherit|initial|unset|revert|currentcolor|none)$/i.test(str) || /var\(/i.test(str)) return null;
+      colorCtx.fillStyle = '#010203';
+      colorCtx.fillStyle = str;
+      const v = colorCtx.fillStyle;
+      if (v === '#010203' && !/^#010203$/i.test(str)) return null;
+      if (v.startsWith('#')) return v.toLowerCase();
+      const m = v.match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?/);
+      if (!m || (m[4] !== undefined && +m[4] < 0.6)) return null; // ignore mostly-transparent overlays
+      return '#' + [m[1], m[2], m[3]].map(n => Math.round(+n).toString(16).padStart(2, '0')).join('');
+    }
+    const rgbOf = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+    function hslOf(h){
+      const [r, g, b] = rgbOf(h).map(x => x / 255), mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2;
+      const s = mx === mn ? 0 : (mx - mn) / (1 - Math.abs(2 * l - 1));
+      return {s, l};
+    }
+    const lumOf = h => { const [r, g, b] = rgbOf(h).map(x => { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+    const contrast = (a, b) => { const x = lumOf(a), y = lumOf(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+    const mixHex = (a, b, t) => { const A = rgbOf(a), B = rgbOf(b); return '#' + A.map((v, i) => Math.round(v * t + B[i] * (1 - t)).toString(16).padStart(2, '0')).join(''); };
+    const isNeutral = h => { const {s, l} = hslOf(h); return s < 0.18 || l > 0.94 || l < 0.07; };
+    const colorDist = (a, b) => { const A = rgbOf(a), B = rgbOf(b); return Math.hypot(A[0] - B[0], A[1] - B[1], A[2] - B[2]); };
+    const stripeFor = (head, text, bg) => lumOf(head) > 0.75 ? mixHex(text, bg, 0.04) : mixHex(head, bg, 0.06);
+    const bestText = bg => contrast('#ffffff', bg) >= contrast('#111111', bg) ? '#ffffff' : '#111111';
+
+    const COLOR_TOKEN = /#[0-9a-f]{3,8}\b|(?:rgba?|hsla?)\([^)]*\)|\b(?:white|black|red|green|blue|navy|teal|orange|purple|gr[ae]y|silver|maroon|olive|lime|aqua|fuchsia|yellow|crimson|gold|indigo|coral|tomato|darkblue|darkgreen|darkred|royalblue|steelblue|slategr[ae]y|dimgr[ae]y|whitesmoke|gainsboro|lightgr[ae]y|darkgr[ae]y)\b/gi;
+    const GENERIC_FONT = /^(inherit|initial|unset|revert|sans-serif|serif|monospace|cursive|fantasy|system-ui|ui-sans-serif|ui-serif|ui-monospace|ui-rounded|-apple-system|blinkmacsystemfont|emoji|math)$/i;
+    const ICON_FONT = /(awesome|icon|dashicons|glyph|eicons|swiper|slick|fontello|material symbols|woocommerce|revicons|elementskit|bootstrap-icons|flaticon|themify|linearicons|feather|^star$|^fa[-\s]|genericons|socicon)/i;
+    const cleanStack = v => String(v).replace(/!important/gi, '').replace(/"/g, "'").replace(/[^\w\s,'\-.]/g, '').replace(/\s+/g, ' ').trim().slice(0, 200);
+    const firstFamily = stack => stack.split(',').map(f => f.trim().replace(/^['"]|['"]$/g, '')).find(f => f && !GENERIC_FONT.test(f) && !ICON_FONT.test(f)) || null;
+
+    // split a selector list on top-level commas only, so :is(h1, h2) stays whole
+    function splitSelectors(sel){
+      const out = []; let depth = 0, cur = '';
+      for (const ch of sel) {
+        if (ch === '(' || ch === '[') depth++;
+        else if (ch === ')' || ch === ']') depth--;
+        if (ch === ',' && depth <= 0) { out.push(cur.trim()); cur = ''; } else cur += ch;
+      }
+      out.push(cur.trim());
+      return out.filter(Boolean);
+    }
+    function parseCSS(text){
+      text = text.replace(/\/\*[\s\S]*?\*\//g, '');
+      const out = [], re = /([^{}]+)\{([^{}]*)\}/g;
+      let m;
+      while ((m = re.exec(text))){
+        const sel = m[1].split(';').pop().trim();
+        if (!sel) continue;
+        const decls = {};
+        m[2].split(';').forEach(d => {
+          const i = d.indexOf(':');
+          if (i > 0) { const k = d.slice(0, i).trim().toLowerCase(), v = d.slice(i + 1).trim(); if (k && v) decls[k] = v; }
+        });
+        out.push({sel, decls});
+      }
+      return out;
+    }
+
+    function analyseCSS(sources, themeColor){
+      const rules = [], faces = [];
+      sources.forEach(src => parseCSS(src.text || '').forEach(r => {
+        if (/^@font-face/i.test(r.sel)) faces.push({d: r.decls, href: src.href});
+        else if (r.sel[0] !== '@') rules.push(r);
+      }));
+
+      // CSS custom properties (root-level ones win)
+      const vars = {};
+      rules.forEach(r => {
+        const rootish = /(^|,)\s*(:root|html|body|\*|:host)\b/i.test(r.sel);
+        for (const [k, v] of Object.entries(r.decls)) if (k.startsWith('--') && (rootish || !(k in vars))) vars[k] = v;
+      });
+      const resolve = (v, d = 0) => d > 6 ? v : v.replace(/var\(\s*(--[\w-]+)\s*(?:,([^()]*(?:\([^()]*\))?[^()]*))?\)/g, (_, n, fb) => {
+        n = n.toLowerCase();
+        return vars[n] !== undefined ? resolve(vars[n], d + 1) : fb ? resolve(fb.trim(), d + 1) : '';
+      });
+      const firstColor = v => { for (const t of (v.match(COLOR_TOKEN) || [])) { const h = toHex(t); if (h) return h; } return null; };
+
+      const colors = new Map();
+      const add = (hex, w, why) => {
+        if (!hex) return;
+        const c = colors.get(hex) || {hex, score: 0, why: new Map()};
+        c.score += w; c.why.set(why, (c.why.get(why) || 0) + w);
+        colors.set(hex, c);
+      };
+      const bodyFonts = new Map(), headFonts = new Map();
+      const addFont = (map, stack, w, why) => {
+        stack = cleanStack(stack);
+        const fam = firstFamily(stack);
+        if (!fam) return;
+        const f = map.get(fam) || {fam, stack, score: 0, why, best: 0};
+        f.score += w;
+        if (w > f.best) { f.best = w; f.stack = stack; f.why = why; }
+        map.set(fam, f);
+      };
+      const found = {};
+      let htmlBase = 16;
+
+      add(toHex(themeColor), 5, 'theme-color meta tag');
+
+      for (const r of rules){
+        const parts = splitSelectors(r.sel);
+        const any = re => parts.some(p => re.test(p));
+        const inter = any(/:(hover|focus|active|visited|disabled)/);
+        const isRoot = any(/^(html|body|:root)(\.[\w-]+|\[[^\]]*\])*$/i); // the element itself, not something inside it
+        const isLink = any(/(^|[\s>])a(:link)?$/i);
+        const isBtn = any(/(^|[\s>+~])(button|\.btn|\.button|\.wp-block-button__link|\.wp-element-button|\.elementor-button|input\[type=["']?submit["']?\]|\.cta)([\s.:\[]|$)/i);
+        const isHeading = any(/(^|[\s>(,])h[1-6](?![\w-])/i) && !any(/(^|[\s>])(p|li|td|th)$/i);
+        const isBar = any(/(^|[\s>])(header|nav|\.site-header|\.navbar|\.header|#header|#masthead|\.top-bar)$/i);
+        const isTh = any(/(^|[\s>])(th|thead(\s+(tr|th))?)$/i);
+        const isTd = any(/(^|[\s>])(td|table|tr)$/i);
+        const isBodyText = any(/^(p|article|main|\.entry-content|\.content)$/i);
+
+        for (const [k, raw] of Object.entries(r.decls)){
+          if (k.startsWith('--')) {
+            const v = resolve(raw);
+            if (/font/.test(k) && /(family|body|heading|text|base|primary|display|sans|serif)/.test(k) && !/(size|weight|style|height|spacing)/.test(k)) {
+              if (/(heading|display|title|headline|secondary)/.test(k)) addFont(headFonts, v, 6, k);
+              else addFont(bodyFonts, v, 5, k);
+              continue;
+            }
+            const h = firstColor(v);
+            if (!h || /(shadow|overlay|disabled|error|danger|success|warning|info|alert|border|muted|gray|grey|light|dark|white|black)/.test(k)) continue;
+            if (/(primary|brand)/.test(k)) add(h, 6, k);
+            else if (/(accent|secondary|highlight|cta|theme|main|button|link)/.test(k)) add(h, 3, k);
+            if (/(^|-)(body|base)-?(text|color|fg|foreground)$|--text-color$|--color-text$|--wp--preset--color--contrast$|--e-global-color-text$|--bs-body-color$/.test(k)) found.textVar = found.textVar || h;
+            if (/(^|-)(body|base)-?(bg|background)$|--color-background$|--wp--preset--color--base$|--bs-body-bg$/.test(k)) found.bgVar = found.bgVar || h;
+            continue;
+          }
+          const v = resolve(raw).replace(/!important/gi, '');
+          if (k === 'font-family') {
+            if (isHeading) addFont(headFonts, v, 4, 'heading rule');
+            else addFont(bodyFonts, v, isRoot ? 10 : isBodyText ? 3 : 1, isRoot ? 'body rule' : isBodyText ? 'content rule' : 'CSS rule');
+            continue;
+          }
+          if (k === 'font' && isRoot) { const f = v.match(/\d[\w.%]*(?:\s*\/\s*[\w.%]+)?\s+(.+)$/); if (f) addFont(bodyFonts, f[1], 10, 'body rule'); continue; }
+          if (k === 'font-size' && isRoot) {
+            const n = parseFloat(v);
+            if (/^html/i.test(r.sel) && /%$/.test(v)) htmlBase = 16 * n / 100;
+            else if (/^body/i.test(r.sel) || /^:root/i.test(r.sel)) found.fontSize = /px$/.test(v) ? n : /r?em$/.test(v) ? n * htmlBase : found.fontSize;
+            continue;
+          }
+          if (!/^(color|background|background-color|border|border-color|border-(top|bottom|left|right)(-color)?|fill|stroke|outline-color|accent-color)$/.test(k)) continue;
+          const h = firstColor(v);
+          if (!h) continue;
+          const bg = /^background/.test(k), border = /^border/.test(k);
+          if (isBtn && bg) add(h, inter ? 1.5 : 4, 'button background');
+          else if (isLink && k === 'color') { add(h, 3, 'link colour'); found.link = found.link || h; }
+          else if (isBar && bg) add(h, 2, 'header / nav background');
+          else if (isHeading && k === 'color') add(h, 1.5, 'heading colour');
+          else add(h, inter ? 0.5 : 1, 'used in the CSS');
+          if (isRoot && k === 'color') found.text = h;
+          if (isRoot && bg) found.bg = h;
+          if (isTh && !inter) { if (bg) found.thBg = h; else if (k === 'color') found.thColor = h; else if (border) found.tableBorder = found.tableBorder || h; }
+          if (isTd && border && !inter) { found.tableBorder = found.tableBorder || h; if (k === 'border' || k === 'border-color') found.tableGrid = true; }
+        }
+      }
+
+      // palette: brand colours, near-duplicates merged
+      const ranked = [...colors.values()].sort((a, b) => b.score - a.score);
+      const brand = [];
+      ranked.filter(c => !isNeutral(c.hex)).forEach(c => { if (!brand.some(b => colorDist(b.hex, c.hex) < 24)) brand.push(c); });
+      const topWhy = c => c ? [...c.why.entries()].sort((a, b) => b[1] - a[1])[0][0] : '';
+      const primary = brand[0] || null;
+
+      // text + background
+      let bodyBg = found.bg || found.bgVar || '#ffffff';
+      let text = found.text || found.textVar || (ranked.find(c => isNeutral(c.hex) && hslOf(c.hex).l < 0.35) || {}).hex || '#222222';
+      if (contrast(text, bodyBg) < 3) text = bestText(bodyBg) === '#ffffff' ? '#f2f2f2' : '#222222';
+
+      // header: existing table header style wins, then the brand colour
+      const headBg = found.thBg && contrast(found.thBg, bodyBg) > 1.05 ? found.thBg : primary ? primary.hex : mixHex(text, bodyBg, 0.9);
+      const headText = found.thColor && contrast(found.thColor, headBg) >= 3 ? found.thColor : bestText(headBg);
+      const borderColor = found.tableBorder || mixHex(text, bodyBg, 0.14);
+
+      const pickFont = map => [...map.values()].sort((a, b) => b.score - a.score)[0] || null;
+      const bodyFont = pickFont(bodyFonts), headingFont = pickFont(headFonts);
+
+      // @font-face rules for the chosen families so the editor preview can show the real font
+      const wanted = [bodyFont, headingFont].filter(Boolean).map(f => f.fam.toLowerCase());
+      const faceCSS = faces.filter(f => wanted.includes((firstFamily(cleanStack(f.d['font-family'] || '')) || '').toLowerCase())).slice(0, 16).map(f => {
+        const urls = [...(f.d.src || '').matchAll(/url\(\s*['"]?([^'")]+)['"]?\s*\)/g)].map(u => { try { return new URL(u[1], f.href || undefined).href; } catch(e){ return null; } }).filter(u => u && /^https:\/\//.test(u));
+        if (!urls.length) return '';
+        const fam = cleanStack(f.d['font-family']);
+        const wt = /^[\w\s]+$/.test(f.d['font-weight'] || '') ? f.d['font-weight'] : '400';
+        const st = /^[\w\s]+$/.test(f.d['font-style'] || '') ? f.d['font-style'] : 'normal';
+        return `@font-face{font-family:${fam};src:${urls.map(u => `url("${u.replace(/["\\]/g, '')}")`).join(',')};font-weight:${wt};font-style:${st};font-display:swap;}`;
+      }).filter(Boolean).join('\n').slice(0, 20000);
+
+      return {
+        preset: {headBg, headText, bodyBg, bodyText: text, borderColor, stripe: stripeFor(headBg, text, bodyBg), borderMode: found.tableBorder ? (found.tableGrid ? 'all' : 'rows') : 'rows', striped: true},
+        brand: brand.slice(0, 10).map(c => ({hex: c.hex, why: topWhy(c)})),
+        primary: primary ? {hex: primary.hex, why: topWhy(primary)} : null,
+        link: found.link || null,
+        why: {
+          headBg: found.thBg && headBg === found.thBg ? 'from the site\u2019s table header style' : primary ? `brand colour (${topWhy(primary)})` : 'no brand colour found, so a dark tint of the text',
+          text: found.text ? 'from the body rule' : found.textVar ? 'from a text colour variable' : 'best guess',
+          bg: found.bg ? 'from the body rule' : found.bgVar ? 'from a background variable' : 'default white',
+          border: found.tableBorder ? 'from the site\u2019s table borders' : 'a light tint of the text colour'
+        },
+        font: bodyFont ? {name: bodyFont.fam, stack: bodyFont.stack, why: bodyFont.why} : null,
+        heading: headingFont ? {name: headingFont.fam, why: headingFont.why} : null,
+        fontSize: found.fontSize && found.fontSize >= 12 && found.fontSize <= 20 ? Math.round(found.fontSize) : null,
+        faceCSS,
+        tableStyled: !!(found.thBg || found.tableBorder)
+      };
+    }
+
+    function injectSiteFonts(){
+      let el = document.getElementById('site-fonts');
+      if (!el) { el = document.createElement('style'); el.id = 'site-fonts'; document.head.appendChild(el); }
+      el.textContent = state.site?.faceCSS || ''; // textContent: nothing from the site can become markup
+    }
+    const siteStatus = $('#site-status'), siteResults = $('#site-results');
+    function setSiteStatus(kind, html){
+      siteStatus.hidden = !kind;
+      siteStatus.className = 'site-status' + (kind === 'err' ? ' err' : '');
+      siteStatus.innerHTML = (kind === 'loading' ? '<span class="spinner"></span>' : '') + `<span>${html || ''}</span>`;
+    }
+    function renderSiteResults(){
+      const S = state.site;
+      siteResults.hidden = !S;
+      if (!S) return;
+      const P = S.preset;
+      const role = (hex, name, why) => `<div class="role-row"><span class="sw" style="background:${hex}"></span><span class="r">${esc(name)}<small title="${escAttr(why)}">${esc(why)}</small></span><span class="hx">${hex}</span></div>`;
+      const kb = Math.round(S.bytes / 1024);
+      siteResults.innerHTML = `
+        <div class="site-head"><div class="site-name" title="${escAttr(S.title || S.host)}">${esc(S.title || S.host)}</div>
+          <div class="site-meta">${esc(S.host)} · ${S.sheets} stylesheet${S.sheets === 1 ? '' : 's'} · ${kb.toLocaleString()} KB of CSS</div></div>
+        <div class="site-block"><div class="site-label">Detected colours</div>
+          ${role(P.headBg, 'Header background', S.why.headBg)}
+          ${role(P.headText, 'Header text', 'chosen for readable contrast')}
+          ${role(P.bodyText, 'Body text', S.why.text)}
+          ${role(P.bodyBg, 'Background', S.why.bg)}
+          ${role(P.borderColor, 'Borders', S.why.border)}
+          ${S.link ? role(S.link, 'Links', 'from the link rule') : ''}</div>
+        ${S.brand.length ? `<div class="site-block"><div class="site-label">Brand colours · click to use for header</div><div class="chips">${S.brand.map(b => `<button type="button" class="chip${b.hex === P.headBg ? ' on' : ''}" data-hex="${b.hex}" style="background:${b.hex}" title="${b.hex} · ${escAttr(b.why)}"></button>`).join('')}</div></div>` : ''}
+        <div class="site-block"><div class="site-label">Fonts</div>
+          <div class="font-row">Body: <b>${S.font ? esc(S.font.name) : 'not found'}</b> ${S.font ? `<small>${esc(S.font.why)}</small>` : '<small>the table will inherit the site font</small>'}</div>
+          ${S.heading ? `<div class="font-row">Headings: <b>${esc(S.heading.name)}</b> <small>${esc(S.heading.why)}</small></div>` : ''}
+          ${S.fontSize ? `<div class="font-row">Base size: <b>${S.fontSize}px</b></div>` : ''}</div>
+        <div class="site-block">
+          <button type="button" class="btn-run btn-sm site-apply" id="site-apply">${state.s.preset === 'site' ? 'Re-apply site preset' : 'Apply site preset'}</button>
+          ${S.tableStyled ? '<p class="site-warn" style="color:var(--teal-dark)">This site already styles its tables. Those styles were used. Tip: the "Unstyled" output option lets them apply directly.</p>' : ''}
+          ${S.warnings.map(w => `<p class="site-warn">${esc(w)}</p>`).join('')}
+        </div>`;
+    }
+    function applySitePreset(){
+      const S = state.site;
+      if (!S) return;
+      PRESET_KEYS.forEach(k => state.s[k] = S.preset[k]);
+      state.s.preset = 'site';
+      state.s.font = S.font ? 'site' : 'inherit';
+      if (S.fontSize) state.s.fontSize = S.fontSize;
+      state.chart.color = S.primary ? S.primary.hex : S.preset.headBg;
+      syncControls(); restyleEditor(); updateOutput(); renderSiteResults();
+      toast(`Site preset applied from ${S.host}`);
+    }
+    function storeAnalysis(res, meta){
+      state.site = Object.assign({host: meta.host, title: meta.title || '', sheets: meta.sheets, bytes: meta.bytes, warnings: meta.warnings}, res);
+      injectSiteFonts();
+      renderSiteResults();
+      renderFontOptions();
+      renderPresetPills();
+      setSiteStatus(null);
+      applySitePreset();
+    }
+    async function runSiteAnalysis(){
+      let url = $('#site-url').value.trim();
+      if (!url) return toast('Enter a website address', true);
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      let host;
+      try { host = new URL(url).hostname; } catch(e){ return toast('That doesn\u2019t look like a web address', true); }
+      const btn = $('#site-analyse');
+      btn.disabled = true;
+      setSiteStatus('loading', `Reading ${esc(host)}: fetching the page and its stylesheets…`);
+      let data;
+      try {
+        const r = await fetch(`${HELPER}/api/site-styles?url=${encodeURIComponent(url)}`);
+        data = await r.json();
+      } catch(e){
+        btn.disabled = false;
+        setSiteStatus('err', 'The site helper isn\u2019t running. Browsers can\u2019t read another site\u2019s CSS directly, so the tool needs its small helper. In the tool\u2019s folder run <code>python app.py</code>, then try again. Or paste the page source below.');
+        $('#site-paste').hidden = false;
+        return;
+      }
+      btn.disabled = false;
+      if (!data.ok) { setSiteStatus('err', esc(data.error || 'Something went wrong.') + ' You can paste the page source below instead.'); $('#site-paste').hidden = false; return; }
+      const warnings = [];
+      const failed = data.sheets.filter(s => !s.ok).length;
+      if (failed) warnings.push(`${failed} stylesheet${failed > 1 ? 's' : ''} couldn\u2019t be loaded, so results may be less accurate.`);
+      if (data.skippedSheets) warnings.push(`Only the first 20 stylesheets were read (${data.skippedSheets} skipped).`);
+      if (!data.css.length) warnings.push('No CSS was found. The site may build its styles with JavaScript, which this can\u2019t see. Try pasting the page source from your browser instead.');
+      const res = analyseCSS(data.css, data.themeColor);
+      storeAnalysis(res, {host: new URL(data.url).hostname, title: data.title, sheets: data.sheets.filter(s => s.ok).length, bytes: data.css.reduce((n, c) => n + c.text.length, 0), warnings});
+    }
+    function analysePasted(){
+      const text = $('#site-paste-input').value;
+      if (!text.trim()) return toast('Paste the page source or CSS first', true);
+      const css = [], warnings = [];
+      let theme = null, host = 'Pasted code', title = '';
+      if (/<(html|head|link|style|body|meta|div)\b/i.test(text)) {
+        const doc = new DOMParser().parseFromString(text, 'text/html'); // parsed only, never run
+        doc.querySelectorAll('style').forEach((s, i) => css.push({source: `<style> ${i + 1}`, href: '', text: s.textContent}));
+        const inl = [...doc.querySelectorAll('[style]')].slice(0, 500).map(e => `${e.tagName.toLowerCase()}{${e.getAttribute('style')}}`);
+        if (inl.length) css.push({source: 'style attributes', href: '', text: inl.join('\n')});
+        theme = doc.querySelector('meta[name="theme-color"]')?.getAttribute('content');
+        title = (doc.querySelector('title')?.textContent || '').trim();
+        const canon = doc.querySelector('link[rel="canonical"]')?.getAttribute('href') || doc.querySelector('meta[property="og:url"]')?.getAttribute('content');
+        try { if (canon) host = new URL(canon).hostname; } catch(e){}
+        const links = doc.querySelectorAll('link[rel~="stylesheet"]').length;
+        if (links) warnings.push(`This page links ${links} external stylesheet${links > 1 ? 's' : ''} that pasting can\u2019t include, so results may be incomplete. Paste those CSS files too, or run the helper (python app.py) for a full read.`);
+      } else css.push({source: 'pasted CSS', href: '', text});
+      const res = analyseCSS(css, theme);
+      storeAnalysis(res, {host, title, sheets: css.length, bytes: text.length, warnings});
+      $('#site-paste').hidden = true;
+    }
+    $('#site-analyse').addEventListener('click', runSiteAnalysis);
+    $('#site-url').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); runSiteAnalysis(); } });
+    $('#site-paste-toggle').addEventListener('click', () => { const p = $('#site-paste'); p.hidden = !p.hidden; if (!p.hidden) $('#site-paste-input').focus(); });
+    $('#site-paste-apply').addEventListener('click', analysePasted);
+    siteResults.addEventListener('click', e => {
+      if (e.target.closest('#site-apply')) return applySitePreset();
+      const chip = e.target.closest('.chip');
+      if (chip) {
+        const P = state.site.preset, hex = chip.dataset.hex;
+        P.headBg = hex; P.headText = bestText(hex); P.stripe = stripeFor(hex, P.bodyText, P.bodyBg);
+        state.site.why.headBg = 'brand colour you picked';
+        applySitePreset();
+      }
+    });
+
+    /* ---------- settings bindings ---------- */
+    const getK = k => k.split('.').reduce((o, p) => o[p], state);
+    const setK = (k, v) => { const parts = k.split('.'); const last = parts.pop(); parts.reduce((o, p) => o[p], state)[last] = v; };
+    const PRESET_KEYS = ['headBg','headText','bodyBg','bodyText','borderColor','stripe','borderMode','striped'];
+
+    const fontSel = $('#font-select');
+    function renderFontOptions(){
+      const keys = Object.keys(FONTS).concat(state.site?.font ? ['site'] : []);
+      fontSel.innerHTML = keys.map(k => `<option value="${k}">${k === 'site' ? 'Site: ' + esc(fontLabel('site')) : FONT_LABELS[k]}</option>`).join('');
+      if (!keys.includes(state.s.font)) state.s.font = 'inherit';
+      fontSel.value = state.s.font;
+    }
+    renderFontOptions();
+    function renderPresetPills(){
+      $('#presets').innerHTML = (state.site ? `<button type="button" class="filter-btn" data-preset="site" title="From ${escAttr(state.site.host)}">Site: ${esc(state.site.host.replace(/^www\./, '').slice(0, 22))}</button>` : '')
+        + Object.entries(PRESETS).map(([k, p]) => `<button type="button" class="filter-btn" data-preset="${k}">${p.label}</button>`).join('');
+      $$('[data-preset]').forEach(b => b.classList.toggle('active', b.dataset.preset === state.s.preset));
+    }
+    renderPresetPills();
+
+    function syncControls(){
+      document.body.classList.toggle('bare', isBare());
+      updateChartUI();
+      $$('[data-k]').forEach(inp => {
+        const v = getK(inp.dataset.k);
+        if (inp.type === 'checkbox') inp.checked = !!v;
+        else inp.value = v;
+        if (inp.type === 'color') inp.parentElement.querySelector('.hex').textContent = v;
+      });
+      $$('[data-out]').forEach(o => o.textContent = getK(o.dataset.out) + (o.dataset.unit || ''));
+      $$('[data-pills]').forEach(g => { const v = getK(g.dataset.pills); g.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.v === v)); });
+      $$('[data-preset]').forEach(b => b.classList.toggle('active', b.dataset.preset === state.s.preset));
+      $('#stage').classList.toggle('dark', state.stage === 'dark');
+      $('#preview-out').classList.toggle('dark', state.stage === 'dark');
+      $('#code-out').hidden = state.tab !== 'code';
+      $('#preview-out').hidden = state.tab !== 'preview';
+    }
+    function afterSetting(k){
+      if (PRESET_KEYS.includes(k.replace('s.', ''))) state.s.preset = 'custom';
+      syncControls();
+      if (k === 'headerRow' || k === 'headerCol') renderEditor();
+      else { restyleEditor(); updateOutput(); }
+    }
+    $$('[data-k]').forEach(inp => {
+      inp.addEventListener(inp.type === 'checkbox' || inp.tagName === 'SELECT' ? 'change' : 'input', () => {
+        let v = inp.type === 'checkbox' ? inp.checked : inp.value;
+        if (inp.type === 'range' || inp.dataset.num) v = +v;
+        setK(inp.dataset.k, v);
+        afterSetting(inp.dataset.k);
+      });
+    });
+    $$('[data-pills]').forEach(g => g.addEventListener('click', e => {
+      const b = e.target.closest('.filter-btn'); if (!b) return;
+      const k = g.dataset.pills;
+      setK(k, b.dataset.v);
+      if (k === 'stage' || k === 'tab') { syncControls(); restyleEditor(); updateOutput(); return; }
+      afterSetting(k);
+    }));
+    $('#presets').addEventListener('click', e => {
+      const b = e.target.closest('[data-preset]'); if (!b) return;
+      if (b.dataset.preset === 'site') return applySitePreset();
+      const p = PRESETS[b.dataset.preset];
+      PRESET_KEYS.forEach(k => state.s[k] = p[k]);
+      state.s.preset = b.dataset.preset;
+      syncControls(); restyleEditor(); updateOutput();
+    });
+    $('#reset-btn').addEventListener('click', () => {
+      if (!confirm('Reset the table? This clears all content and styling.')) return;
+      state = defaultState(); active = null;
+      injectSiteFonts(); renderSiteResults(); renderFontOptions(); renderPresetPills();
+      syncControls(); renderEditor();
+      toast('Table reset');
+    });
+
+    /* ---------- copy ---------- */
+    async function copyText(text){
+      try { await navigator.clipboard.writeText(text); return true; }
+      catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        const ok = document.execCommand('copy');
+        ta.remove(); return ok;
+      }
+    }
+    async function copyRich(html, plain){
+      // Write our exact HTML string to the clipboard. Nothing is selected/copied from the rendered page,
+      // so the browser can't inject computed-style <span>s or extra wrappers.
+      try {
+        if (!window.ClipboardItem || !navigator.clipboard?.write) throw new Error('no ClipboardItem');
+        await navigator.clipboard.write([new ClipboardItem({
+          'text/html': new Blob([html], {type:'text/html'}),
+          'text/plain': new Blob([plain], {type:'text/plain'})
+        })]);
+        return true;
+      } catch(e){
+        let done = false;
+        const handler = ev => { ev.clipboardData.setData('text/html', html); ev.clipboardData.setData('text/plain', plain); ev.preventDefault(); done = true; };
+        document.addEventListener('copy', handler);
+        try { document.execCommand('copy'); } finally { document.removeEventListener('copy', handler); }
+        return done;
+      }
+    }
+    $('#copy-code').addEventListener('click', async () => {
+      const ok = await copyText(buildHTML(state.o.minify));
+      toast(ok ? 'HTML code copied' : 'Copy failed. Select the code and copy manually', !ok);
+    });
+    $('#copy-rich').addEventListener('click', async () => {
+      const ok = await copyRich(buildHTML(true), buildPlain());
+      toast(ok ? 'Styled table copied, ready to paste' : 'Copy failed in this browser', !ok);
+    });
+
+    /* ---------- toast ---------- */
+    let toastTimer;
+    function toast(msg, err){
+      const t = $('#toast');
+      t.querySelector('span').textContent = msg;
+      t.classList.toggle('err', !!err);
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    /* ---------- boot ---------- */
+    // re-clean any stored content in case it came from an older version
+    state.cells.forEach(row => row.forEach(c => { c.h = cleanString(c.h || ''); c.a = c.a || ''; c.bg = normColor(c.bg) || ''; }));
+    injectSiteFonts();
+    renderSiteResults();
+    if (state.site) $('#site-url').value = state.site.host === 'Pasted code' ? '' : state.site.host;
+    syncControls();
+    renderEditor();
+  })();
+  </script>
+</body>
+</html>
