@@ -453,6 +453,8 @@
             </div>
             <label class="switch styled-only">Mobile scroll wrapper<input type="checkbox" data-k="o.wrap" /></label>
             <label class="switch">Links open in new tab<input type="checkbox" data-k="o.newTab" /></label>
+            <label class="switch styled-only">Compact styles (smaller HTML)<input type="checkbox" data-k="o.compact" /></label>
+            <p class="bare-note styled-only" id="compact-note"></p>
             <label class="switch">Minify code<input type="checkbox" data-k="o.minify" /></label>
             <div style="margin-top:.9rem"><button type="button" class="btn-secondary btn-sm btn-danger" id="reset-btn">Reset table</button></div>
           </div>
@@ -728,7 +730,7 @@
         cells: makeCells(4, 3), headerRow:true, headerCol:false, caption:'',
         s:{preset:'paramount', headBg:p.headBg, headText:p.headText, bodyBg:p.bodyBg, bodyText:p.bodyText, borderColor:p.borderColor, stripe:p.stripe, borderMode:p.borderMode, striped:p.striped,
            borderWidth:1, fontSize:15, pad:12, align:'left', valign:'top', width:'100%', font:'inherit'},
-        o:{wrap:true, newTab:true, minify:false, mode:'styled', tableClass:''},
+        o:{wrap:true, newTab:true, minify:false, mode:'styled', tableClass:'', compact:true},
         chart:{on:false, type:'bars', labelCol:0, valueCol:1, title:'', color:'#008475', pos:'above', height:200, showValues:true, truncate:false, maxLabel:14, reveal:'both', output:'both', imgW:800, transparent:false},
         stage:'light', tab:'code'
       };
@@ -860,7 +862,7 @@
     function css(o){ return Object.entries(o).filter(([,v]) => v !== '' && v != null).map(([k,v]) => `${k}:${v};`).join(''); }
     function tableCSS(){
       const s = state.s;
-      return {'width': s.width, 'border-collapse':'collapse', 'border-spacing':'0',
+      return {'width': s.width, 'border-collapse':'collapse',
         'font-family': fontStack(s.font), 'font-size': s.fontSize + 'px', 'line-height':'1.5',
         'color': s.bodyText, 'background-color': s.bodyBg};
     }
@@ -881,15 +883,37 @@
       if (cell.bg) o['background-color'] = cell.bg;
       return o;
     }
+    /* Compact output: body cells only carry what they can't inherit. Text-align is inherited from the
+       table, vertical-align from thead/tbody, stripes and row borders sit on the <tr> (row borders render
+       in the collapsed border model). Header cells keep full styles because themes often style <th>. */
+    function cellCSSCompact(r, c){
+      const s = state.s, cell = state.cells[r][c], hr = isHeadRow(r), hc = isHeadCol(r, c);
+      const o = {'padding': `${s.pad}px ${Math.round(s.pad * 1.3)}px`};
+      if (hr || hc) o['text-align'] = cell.a || s.align; // <th> defaults to centre, so it always needs it
+      else if (cell.a && cell.a !== s.align) o['text-align'] = cell.a;
+      o['border'] = s.borderMode === 'all' ? `${s.borderWidth}px solid ${s.borderColor}` : 'none'; // 'none' stops theme borders
+      if (hr) { o['background-color'] = s.headBg; o['color'] = s.headText; o['font-weight'] = '600'; }
+      else if (hc) o['font-weight'] = '600';
+      if (cell.bg) o['background-color'] = cell.bg;
+      return o;
+    }
+    function rowCSSCompact(r){
+      const s = state.s, o = {};
+      if (s.borderMode === 'rows') o['border-bottom'] = `${s.borderWidth + (isHeadRow(r) ? 1 : 0)}px solid ${s.borderColor}`;
+      if (!isHeadRow(r) && s.striped && (state.headerRow ? r - 1 : r) % 2 === 1) o['background-color'] = s.stripe;
+      return o;
+    }
+    // #aabbcc -> #abc inside style attributes only (never touches cell text)
+    const shortHex = html => html.replace(/ style="([^"]*)"/g, (_, v) => ` style="${v.replace(/#([0-9a-f])\1([0-9a-f])\2([0-9a-f])\3(?![0-9a-f])/gi, '#$1$2$3')}"`);
     const captionCSS = () => ({'caption-side':'top', 'text-align':'left', 'padding':'0 0 10px', 'font-weight':'600'});
 
     /* ---------- output ---------- */
     const cellText = h => { const d = document.createElement('div'); d.innerHTML = h.replace(/<br>|<\/li>/g, ' '); return d.textContent.replace(/\s+/g, ' ').trim(); };
     function barHTML(v, color, label){
-      const track = css({'flex':'1', 'min-width':'60px', 'height':'10px', 'background-color':'rgba(127,127,127,0.2)', 'border-radius':'5px', 'overflow':'hidden'});
-      const fill = css({'width': v + '%', 'height':'100%', 'background-color': color, 'border-radius':'5px'});
+      const track = css({'flex':'1', 'min-width':'60px', 'height':'10px', 'background-color':'rgba(127,127,127,.2)', 'border-radius':'5px', 'overflow':'hidden'});
+      const fill = css({'width': v + '%', 'height':'100%', 'background-color': color});
       const lbl = label ? `<span style="${css({'font-size':'0.85em', 'min-width':'3em', 'text-align':'right', 'white-space':'nowrap'})}">${v}%</span>` : '';
-      return `<div style="${css({'display':'flex', 'align-items':'center', 'gap':'8px', 'margin':'2px 0'})}"><div style="${track}"><div style="${fill}"></div></div>${lbl}</div>`;
+      return `<div style="${css({'display':'flex', 'align-items':'center', 'gap':'8px'})}"><div style="${track}"><div style="${fill}"></div></div>${lbl}</div>`;
     }
     const isBare = () => state.o.mode === 'bare';
     const safeClass = v => String(v || '').replace(/[^\w\- ]/g, '').trim().replace(/\s+/g, ' ');
@@ -984,26 +1008,31 @@
       if (tableOn) {
         const cls = safeClass(state.o.tableClass);
         if (state.o.wrap && !bare) open('<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">');
-        open(bare ? `<table${cls ? ` class="${cls}"` : ''}>` : `<table style="${css(tableCSS())}">`);
+        const compact = !bare && state.o.compact;
+        const tcss = tableCSS();
+        if (compact && state.s.align !== 'left') tcss['text-align'] = state.s.align;
+        open(bare ? `<table${cls ? ` class="${cls}"` : ''}>` : `<table style="${css(tcss)}">`);
         if (state.caption.trim()) push(bare ? `<caption>${esc(state.caption.trim())}</caption>` : `<caption style="${css(captionCSS())}">${esc(state.caption.trim())}</caption>`);
         const rowHTML = r => {
-          open('<tr>');
+          const rc = compact ? css(rowCSSCompact(r)) : '';
+          open(rc ? `<tr style="${rc}">` : '<tr>');
           for (let c = 0; c < nCols(); c++){
             const hr = isHeadRow(r), hc = isHeadCol(r, c);
             const tag = hr || hc ? 'th' : 'td';
             const scope = hr ? ' scope="col"' : hc ? ' scope="row"' : '';
-            push(bare ? `<${tag}${scope}>${cellContent(r, c)}</${tag}>` : `<${tag}${scope} style="${css(cellCSS(r, c))}">${cellContent(r, c)}</${tag}>`);
+            push(bare ? `<${tag}${scope}>${cellContent(r, c)}</${tag}>` : `<${tag}${scope} style="${css(compact ? cellCSSCompact(r, c) : cellCSS(r, c))}">${cellContent(r, c)}</${tag}>`);
           }
           close('</tr>');
         };
         let start = 0;
-        if (state.headerRow) { open('<thead>'); rowHTML(0); close('</thead>'); start = 1; }
-        if (start < nRows()) { open('<tbody>'); for (let r = start; r < nRows(); r++) rowHTML(r); close('</tbody>'); }
+        const group = tag => compact && state.s.valign === 'top' ? `<${tag} style="vertical-align:top;">` : `<${tag}>`;
+        if (state.headerRow) { open(group('thead')); rowHTML(0); close('</thead>'); start = 1; }
+        if (start < nRows()) { open(group('tbody')); for (let r = start; r < nRows(); r++) rowHTML(r); close('</tbody>'); }
         close('</table>');
         if (state.o.wrap && !bare) close('</div>');
       }
       if (chartOn && tableOn && state.chart.pos === 'below') emitChart(push, open, close, false);
-      return L.join(minify ? '' : '\n');
+      return shortHex(L.join(minify ? '' : '\n'));
     }
     const chartOnly = () => state.chart.on && state.chart.output === 'chart';
     function buildPlain(){
@@ -1045,6 +1074,10 @@
         updateChartUI();
         const bytes = new Blob([code]).size;
         $('#output-meta').textContent = (isBare() ? 'Unstyled · ' : '') + (chartOnly() && !isBare() ? 'Chart only · ' : `${nRows()} × ${nCols()} · `) + `${bytes.toLocaleString()} bytes`;
+        if (!isBare() && state.o.compact) {
+          state.o.compact = false; const full = new Blob([buildHTML(state.o.minify)]).size; state.o.compact = true;
+          $('#compact-note').textContent = full > bytes ? `${Math.round((1 - bytes / full) * 100)}% smaller than full styles (${full.toLocaleString()} bytes). Shared styles are set once on the table and rows. If your theme restyles table cells, turn this off so every cell carries its own styles.` : '';
+        } else $('#compact-note').textContent = 'Every cell carries its full styles: the most resistant to theme CSS, but the largest output.';
         $('#stage').classList.toggle('data-only', chartOnly() && !isBare());
         $('#data-only-tag').classList.toggle('show', chartOnly() && !isBare());
         save();
